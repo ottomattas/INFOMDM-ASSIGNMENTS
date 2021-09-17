@@ -1,8 +1,8 @@
 import numpy as np
 from collections import Counter
 from ClassificationTreeDM import OpType as op, ClassificationTreeDM
-credit_data = np.genfromtxt('credit.txt', delimiter=',', skip_header=True)
 
+credit_data = np.genfromtxt('credit.txt', delimiter=',', skip_header=True)
 '''
 ### tree_grow()
 ###
@@ -16,6 +16,8 @@ credit_data = np.genfromtxt('credit.txt', delimiter=',', skip_header=True)
 ### Returns:
 ###     A ClassificationTreeDM object with the generated tree
 '''
+
+
 def tree_grow(x, y, nmin, minleaf, nfeat=len(x)):
     return ClassificationTreeDM(x, y, nmin, minleaf, nfeat)
 
@@ -35,12 +37,16 @@ def tree_grow(x, y, nmin, minleaf, nfeat=len(x)):
 ###     A list of m ClassificationTreeDM objects each trained with a
 ###     bootstrap sample of the data
 '''
+
+
 def tree_grow_b(x, y, nmin, minleaf, nfeat=x.shape[0], m):
     ret = []
     for i in range(m):
         indexes = np.random.choice(range(x.shape[0]), size=x.shape[0])
-        ret.append(tree_grow(x[indexes,:], y[indexes,:], nmin, minleaf, nfeat))
+        ret.append(
+            tree_grow(x[indexes, :], y[indexes, :], nmin, minleaf, nfeat))
     return ret
+
 
 '''
 ### tree_pred()
@@ -52,6 +58,8 @@ def tree_grow_b(x, y, nmin, minleaf, nfeat=x.shape[0], m):
 ### Returns:
 ###     List of class predictions for each element as predicted by the tree
 '''
+
+
 def tree_pred(x, tr):
     predictions = []
 
@@ -60,6 +68,7 @@ def tree_pred(x, tr):
         predictions.append(row)
 
     return predictions
+
 
 '''
 ### tree_pred_b()
@@ -72,6 +81,8 @@ def tree_pred(x, tr):
 ###     List of class predictions for each element decided
 ###     by majority vote between all the trees
 '''
+
+
 def tree_pred_b(x, trees):
     nelements = len(x[0])
     totalpreds = None
@@ -88,14 +99,16 @@ def tree_pred_b(x, trees):
     ## Get each element's majority vote
     retpreds = []
     for i in range(nelements):
-        votesEl = totalpreds[:,i]
+        votesEl = totalpreds[:, i]
         cnt = Counter(votesEl)
         retpreds.append(cnt.most_common(1)[0][0])
 
     return retpreds
 
+
 nmin = 2
 minleaf = 1
 nfeat = 0
-tree = tree_grow(credit_data[:,range(0, 5)], credit_data[:,5], nmin, minleaf, nfeat)
+tree = tree_grow(credit_data[:, range(0, 5)], credit_data[:, 5], nmin, minleaf,
+                 nfeat)
 print(tree.print())

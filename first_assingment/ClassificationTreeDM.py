@@ -3,7 +3,6 @@ import numpy as np
 import random
 from collections import Counter
 from gettingStarted import impurity, bestsplit
-
 '''
 ### The structure of the tree follows a set of nodes, each with a comparator assigned to it.
 ### To classify, each node operates a value of a certain attribute (column), against a constant
@@ -18,13 +17,14 @@ from gettingStarted import impurity, bestsplit
 ### The classes comprising the tree are ClassificationTreeDM (tree), CTreeDMNode (node)
 ### and CTreeDMLeaf (leaf)
 '''
-
 '''
 ### Enum OpType
 ###
 ### These are the six operators a tree can use for each node. Each operator
 ### assigned a function to compare two values
 '''
+
+
 class OpType(enum.Enum):
     EQUALS = 1
     LESSTHAN = 2
@@ -32,13 +32,15 @@ class OpType(enum.Enum):
     MORETHAN = 4
     MORETHANEQUALS = 5
     NOTEQUALS = 6
-    
-    comparators = {EQUALS:lambda x,y: True if x == y else False,
-                    LESSTHAN:lambda x,y: True if x < y else False,
-                    LESSTHANEQUALS:lambda x,y: True if x <= y else False,
-                    MORETHAN:lambda x,y: True if x > y else False,
-                    MORETHANEQUALS:lambda x,y: True if x >= y else False,
-                    NOTEQUALS:lambda x,y: True if x != y else False}
+
+    comparators = {
+        EQUALS: lambda x, y: True if x == y else False,
+        LESSTHAN: lambda x, y: True if x < y else False,
+        LESSTHANEQUALS: lambda x, y: True if x <= y else False,
+        MORETHAN: lambda x, y: True if x > y else False,
+        MORETHANEQUALS: lambda x, y: True if x >= y else False,
+        NOTEQUALS: lambda x, y: True if x != y else False
+    }
 
 
 '''
@@ -49,8 +51,9 @@ class OpType(enum.Enum):
 ###
 ###
 '''
-class ClassificationTreeDM(object): 
 
+
+class ClassificationTreeDM(object):
     '''
     ### Constructor
     ###
@@ -66,8 +69,13 @@ class ClassificationTreeDM(object):
     def __init__(self, values, labels, nmin, minleaf, nfeat):
         self.root = self.produceNextNode(values, labels, nmin, minleaf, nfeat)
 
-
-    def produceNextNode(self, values, labels, nmin, minleaf, nfeat, parent=None):
+    def produceNextNode(self,
+                        values,
+                        labels,
+                        nmin,
+                        minleaf,
+                        nfeat,
+                        parent=None):
         ## If all elements are of the same class, no need to split
         if len(np.unique(labels)) < 2:
             return CTreeDMLeaf(labels)
@@ -85,36 +93,50 @@ class ClassificationTreeDM(object):
             attrs = range(values.shape[1])
 
         for i in attrs:
-            nextattr = values[:,i]
+            nextattr = values[:, i]
             bsplit = bestsplit(nextattr, labels)
             nextsplit.append((bsplit["value"], bsplit["combined-gini"], i))
 
-        nextsplit = sorted(nextsplit, key=lambda x:x[1])
+        nextsplit = sorted(nextsplit, key=lambda x: x[1])
         for i in range(len(values)):
             cutvalue, gini, column = nextsplit[i]
 
             ## Check sizes, if they are too small to even be
             ## a leaf, choose next best split
-            nleft = values[values[:,column] <= cutvalue].shape[0]
-            nright = values[values[:,column] > cutvalue].shape[0]
+            nleft = values[values[:, column] <= cutvalue].shape[0]
+            nright = values[values[:, column] > cutvalue].shape[0]
             if nleft >= minleaf and nright >= minleaf:
-                ret = CTreeDMNode(parent, OpType.comparators[LESSTHANEQUALS], column, hasConstant=True, value=cutvalue)
-                ret.setLeft(self.produceNextNode(values[values[:,column] <= cutvalue],
-                                            labels[values[:,column] <= cutvalue],
-                                            nmin, minleaf, nfeat, parent=ret))
-                ret.setRight(self.produceNextNode(values[values[:,column] > cutvalue],
-                                            labels[values[:,column] > cutvalue],
-                                            nmin, minleaf, nfeat, parent=ret))
+                ret = CTreeDMNode(parent,
+                                  OpType.comparators[LESSTHANEQUALS],
+                                  column,
+                                  hasConstant=True,
+                                  value=cutvalue)
+                ret.setLeft(
+                    self.produceNextNode(values[values[:, column] <= cutvalue],
+                                         labels[values[:, column] <= cutvalue],
+                                         nmin,
+                                         minleaf,
+                                         nfeat,
+                                         parent=ret))
+                ret.setRight(
+                    self.produceNextNode(values[values[:, column] > cutvalue],
+                                         labels[values[:, column] > cutvalue],
+                                         nmin,
+                                         minleaf,
+                                         nfeat,
+                                         parent=ret))
                 return ret
         return CTreeDMLeaf(labels)
-    
+
     def predict(self, row):
         curnode = self.root
         while not curnode.isLeaf:
             if curnode.hasConstant:
-                ret = curnode.operator(row[curnode.columnIndex], curnode.compvalue)
+                ret = curnode.operator(row[curnode.columnIndex],
+                                       curnode.compvalue)
             else:
-                ret = curnode.operator(row[curnode.columnIndex], row[curnode.secondIndex])
+                ret = curnode.operator(row[curnode.columnIndex],
+                                       row[curnode.secondIndex])
             curnode = curnode.left if ret else curnode.right
 
         return curnode.getMajorityClass()
@@ -133,10 +155,16 @@ class ClassificationTreeDM(object):
 ### hasConstant and secondIndex are used to compare between attributes
 ### instead to numeric constants (currently unused)
 '''
-class CTreeDMNode(object):
 
-    
-    def __init__(self, parent, operator, columnIndex, hasConstant=True, value=None, secondIndex=None):
+
+class CTreeDMNode(object):
+    def __init__(self,
+                 parent,
+                 operator,
+                 columnIndex,
+                 hasConstant=True,
+                 value=None,
+                 secondIndex=None):
         self.parent = parent
         self.operator = operator
         self.compvalue = value
@@ -151,7 +179,11 @@ class CTreeDMNode(object):
         self.right = node
 
     def print(self, tabs=0):
-        return "".join(["\t" for i in range(tabs)]) + "Node. Column: " + str(self.columnIndex) + "\t- Value on split: " + str(self.compvalue) + "\n" + self.left.print(tabs+1) + self.right.print(tabs+1)
+        return "".join(["\t" for i in range(tabs)]) + "Node. Column: " + str(
+            self.columnIndex) + "\t- Value on split: " + str(
+                self.compvalue) + "\n" + self.left.print(
+                    tabs + 1) + self.right.print(tabs + 1)
+
 
 '''
 ### CTreeDMLeaf: Leaf class
@@ -159,6 +191,8 @@ class CTreeDMNode(object):
 ### Stores an array with all the classes for the individuals
 ### the leaf represents
 '''
+
+
 class CTreeDMLeaf(object):
 
     isLeaf = True
@@ -170,4 +204,5 @@ class CTreeDMLeaf(object):
         return self.cnt.most_common(1)[0][0]
 
     def print(self, tabs=0):
-        return "".join(["\t" for i in range(tabs)]) + "Leaf. Elements: " + str(self.cnt)
+        return "".join(["\t" for i in range(tabs)]) + "Leaf. Elements: " + str(
+            self.cnt)
