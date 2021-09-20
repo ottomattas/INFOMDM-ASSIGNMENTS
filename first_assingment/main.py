@@ -39,7 +39,7 @@ def tree_grow(x, y, nmin, minleaf, nfeat=len(x)):
 '''
 
 
-def tree_grow_b(x, y, nmin, minleaf, nfeat=x.shape[0], m):
+def tree_grow_b(x, y, nmin, minleaf, m, nfeat= x.shape[0]):
     ret = []
     for i in range(m):
         indexes = np.random.choice(range(x.shape[0]), size=x.shape[0])
