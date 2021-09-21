@@ -94,7 +94,7 @@ def tree_pred_b(x, trees):
     ## Obtain each prediction and put them into a
     ## numpy matrix, each row is a tree's prediction list
     for tree in trees:
-        treepred = numpy.array(tree_pred(x, tree))
+        treepred = np.array(tree_pred(x, tree))
         if totalpreds is None:
             totalpreds = treepred
         else:
