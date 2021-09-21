@@ -1,13 +1,15 @@
 import numpy as np
-from inequality.gini import Gini
+import math
+from collections import Counter
 
 credit_data = np.genfromtxt('credit.txt', delimiter=',', skip_header=True)
 
 
 def impurity(array):
-    gini = Gini(array)
-    return gini.g
-
+    cnt = Counter(array)
+    keys = list(cnt.keys())
+    gini = (cnt[keys[0]] * cnt[keys[1]]) / math.pow(len(array), 2)
+    return gini
 
 def bestsplit(x, y):
     n = len(x)

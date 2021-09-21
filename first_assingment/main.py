@@ -18,7 +18,9 @@ credit_data = np.genfromtxt('credit.txt', delimiter=',', skip_header=True)
 '''
 
 
-def tree_grow(x, y, nmin, minleaf, nfeat=len(x)):
+def tree_grow(x, y, nmin, minleaf, nfeat=None):
+    if nfeat is None:
+        nfeat = len(x)
     return ClassificationTreeDM(x, y, nmin, minleaf, nfeat)
 
 
@@ -39,7 +41,9 @@ def tree_grow(x, y, nmin, minleaf, nfeat=len(x)):
 '''
 
 
-def tree_grow_b(x, y, nmin, minleaf, nfeat=x.shape[0], m):
+def tree_grow_b(x, y, nmin, minleaf, nfeat=None, m=1):
+    if nfeat is None:
+        nfeat = x.shape[0]
     ret = []
     for i in range(m):
         indexes = np.random.choice(range(x.shape[0]), size=x.shape[0])

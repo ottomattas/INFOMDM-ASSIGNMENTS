@@ -87,7 +87,7 @@ class ClassificationTreeDM(object):
 
         nextsplit = []
         ## Perform bagging if necessary
-        if nfeat < values.shape[1]:
+        if nfeat < values.shape[1] and nfeat != 0:
             attrs = random.sample(range(values.shape[1]), nfeat)
         else:
             attrs = range(values.shape[1])
@@ -107,7 +107,7 @@ class ClassificationTreeDM(object):
             nright = values[values[:, column] > cutvalue].shape[0]
             if nleft >= minleaf and nright >= minleaf:
                 ret = CTreeDMNode(parent,
-                                  OpType.comparators[LESSTHANEQUALS],
+                                  OpType.comparators.value[OpType.LESSTHANEQUALS.value],
                                   column,
                                   hasConstant=True,
                                   value=cutvalue)
