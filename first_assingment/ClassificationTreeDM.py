@@ -98,7 +98,7 @@ class ClassificationTreeDM(object):
             nextsplit.append((bsplit["value"], bsplit["combined-gini"], i))
 
         nextsplit = sorted(nextsplit, key=lambda x: x[1])
-        for i in range(len(values)):
+        for i in range(len(nextsplit)):
             cutvalue, gini, column = nextsplit[i]
 
             ## Check sizes, if they are too small to even be
@@ -138,10 +138,10 @@ class ClassificationTreeDM(object):
                 ret = curnode.operator(row[curnode.columnIndex],
                                        row[curnode.secondIndex])
             curnode = curnode.left if ret else curnode.right
+        ret = curnode.getMajorityClass()
+        return ret
 
-        return curnode.getMajorityClass()
-
-    def print(self):
+    def __str__(self):
         return "Printing Tree:\nRoot " + self.root.print()
 
 
@@ -158,6 +158,9 @@ class ClassificationTreeDM(object):
 
 
 class CTreeDMNode(object):
+
+    isLeaf = False
+
     def __init__(self,
                  parent,
                  operator,

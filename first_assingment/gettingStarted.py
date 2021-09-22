@@ -25,12 +25,12 @@ def bestsplit(x, y):
         if len(np.unique(less)) < 2:
             sless = 0
         else:
-            sless = impurity(less)
+            sless = impurity(less) * (len(less)/n)
         if len(np.unique(more)) < 2:
             smore = 0
         else:
-            smore = impurity(more)
-        score = sless + smore
+            smore = impurity(more) * (len(more)/n)
+        score = (sless + smore) / 2
         scores.append(score)
     candscores = [[candidates[idx], scores[idx]]
                   for idx in range(len(candidates))]
