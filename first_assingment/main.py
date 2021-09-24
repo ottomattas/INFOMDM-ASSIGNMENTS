@@ -71,7 +71,6 @@ def tree_pred(x, tr):
         pred = tr.predict(row)
         predictions.append(pred)
 
-
     return predictions
 
 
@@ -110,9 +109,12 @@ def tree_pred_b(x, trees):
 
     return retpreds
 
+
 '''
 ### calculateTreePerformanceStats
 '''
+
+
 def calculateTreePerformanceStats(x, y, tree):
     predicts = tree_pred(x, tree)
     tp = 0
@@ -132,19 +134,20 @@ def calculateTreePerformanceStats(x, y, tree):
             else:
                 fn += 1
 
-    recall = tp/(tp+fn)
-    precision = tp/(tp+fp)
-    accuracy = (tp+tn)/len(predicts)
-    specificity = tn/(tn+fp)
-    f1 = (2*tp)/((2*tp) + fp + fn)
-    confmatrix = [[tp, fn],
-                    [fp, tn]]
-    results = {"recall":recall,
-                "precision":precision,
-                "accuracy":accuracy,
-                "specificity":specificity,
-                "f1_score":f1,
-                "confusion_matrix":confmatrix}
+    recall = tp / (tp + fn)
+    precision = tp / (tp + fp)
+    accuracy = (tp + tn) / len(predicts)
+    specificity = tn / (tn + fp)
+    f1 = (2 * tp) / ((2 * tp) + fp + fn)
+    confmatrix = [[tp, fn], [fp, tn]]
+    results = {
+        "recall": recall,
+        "precision": precision,
+        "accuracy": accuracy,
+        "specificity": specificity,
+        "f1_score": f1,
+        "confusion_matrix": confmatrix
+    }
     return results
 
 
@@ -166,15 +169,21 @@ tree = tree_grow(credit_data[:, range(0, 5)], credit_data[:, 5], nmin, minleaf,
 print(tree)
 
 '''
-columns = ['pre', 'ACD_avg','ACD_max','ACD_sum','FOUT_avg','FOUT_max','FOUT_sum','MLOC_avg','MLOC_max',
-                    'MLOC_sum','NBD_avg','NBD_max','NBD_sum','NOF_avg','NOF_max','NOF_sum',
-                    'NOI_avg','NOI_max','NOI_sum','NOM_avg','NOM_max','NOM_sum','NOT_avg',
-                    'NOT_max','NOT_sum','NSF_avg','NSF_max','NSF_sum','NSM_avg',
-                    'NSM_max','NSM_sum','PAR_avg','PAR_max','PAR_sum','TLOC_avg',
-                    'TLOC_max','TLOC_sum','VG_avg','VG_max','VG_sum', 'NOCU']
+columns = [
+    'pre', 'ACD_avg', 'ACD_max', 'ACD_sum', 'FOUT_avg', 'FOUT_max', 'FOUT_sum',
+    'MLOC_avg', 'MLOC_max', 'MLOC_sum', 'NBD_avg', 'NBD_max', 'NBD_sum',
+    'NOF_avg', 'NOF_max', 'NOF_sum', 'NOI_avg', 'NOI_max', 'NOI_sum',
+    'NOM_avg', 'NOM_max', 'NOM_sum', 'NOT_avg', 'NOT_max', 'NOT_sum',
+    'NSF_avg', 'NSF_max', 'NSF_sum', 'NSM_avg', 'NSM_max', 'NSM_sum',
+    'PAR_avg', 'PAR_max', 'PAR_sum', 'TLOC_avg', 'TLOC_max', 'TLOC_sum',
+    'VG_avg', 'VG_max', 'VG_sum', 'NOCU'
+]
 
 print("Importing data...")
-train_data = np.genfromtxt('eclipse-metrics-packages-2.0.csv', delimiter=';', dtype=float, names=True)
+train_data = np.genfromtxt('eclipse-metrics-packages-2.0.csv',
+                           delimiter=';',
+                           dtype=float,
+                           names=True)
 classes = train_data["post"]
 classes[classes > 1] = 1
 train_data = train_data[columns]
@@ -190,15 +199,13 @@ print("Growing tree...")
 tree = tree_grow(tdata, classes, nmin, minleaf, nfeat)
 print(tree)
 
-test_data = np.genfromtxt('eclipse-metrics-packages-3.0.csv', delimiter=';', dtype=float, names=True)
+test_data = np.genfromtxt('eclipse-metrics-packages-3.0.csv',
+                          delimiter=';',
+                          dtype=float,
+                          names=True)
 classes = train_data["post"]
 classes[classes > 1] = 1
 test_data = test_data[columns]
 tdata = np.asarray(list(train_data[0]))
 for row in train_data[1:]:
     tdata = np.vstack((tdata, list(row)))
-
-
-'''
-
-
