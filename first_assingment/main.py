@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import tqdm
 from collections import Counter
 from ClassificationTreeDM import OpType as op, ClassificationTreeDM
 
@@ -45,7 +46,7 @@ def tree_grow_b(x, y, nmin, minleaf, nfeat=None, m=1):
     if nfeat is None:
         nfeat = x.shape[0]
     ret = []
-    for i in range(m):
+    for i in tqdm(range(m)):
         indexes = np.random.choice(range(x.shape[0]), size=x.shape[0])
         ret.append(
             tree_grow(x[indexes, :], y[indexes, :], nmin, minleaf, nfeat))
