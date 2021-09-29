@@ -120,7 +120,7 @@ def calculateTreePerformanceStats(x, y, tree, bagging=False):
     if bagging:
         predicts = tree_pred_b(x, tree)
     else:
-    predicts = tree_pred(x, tree)
+        predicts = tree_pred(x, tree)
     tp = 0
     tn = 0
     fp = 0
@@ -213,3 +213,4 @@ test_data = test_data[columns]
 tdata = np.asarray(list(test_data[0]))
 for row in test_data[1:]:
     tdata = np.vstack((tdata, list(row)))
+# print(calculateTreePerformanceStats(tdata,classes,tree,bagging=True))
