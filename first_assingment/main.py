@@ -116,7 +116,10 @@ def tree_pred_b(x, trees):
 '''
 
 
-def calculateTreePerformanceStats(x, y, tree):
+def calculateTreePerformanceStats(x, y, tree, bagging=False):
+    if bagging:
+        predicts = tree_pred_b(x, tree)
+    else:
     predicts = tree_pred(x, tree)
     tp = 0
     tn = 0
