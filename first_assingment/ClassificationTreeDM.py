@@ -23,8 +23,6 @@ from gettingStarted import impurity, bestsplit
 ### These are the six operators a tree can use for each node. Each operator
 ### assigned a function to compare two values
 '''
-
-
 class OpType(enum.Enum):
     EQUALS = 1
     LESSTHAN = 2
@@ -41,6 +39,11 @@ class OpType(enum.Enum):
         MORETHANEQUALS: lambda x, y: True if x >= y else False,
         NOTEQUALS: lambda x, y: True if x != y else False
     }
+
+
+
+
+
 
 
 '''
@@ -66,8 +69,10 @@ class ClassificationTreeDM(object):
     ###     minleaf: Minimum number of individuals contained on a leaf to exist
     ###     nfeat: Number of features to consider
     '''
-    def __init__(self, values, labels, nmin, minleaf, nfeat):
-        self.root = self.produceNextNode(values, labels, nmin, minleaf, nfeat)
+    def __init__(self, values, labels, nmin, minleaf, nfeat, classnames=None):
+        if classnames is None:
+            classnames = [str(i) for i in range(len(labels))]
+        self.root = self.produceNextNode(values, labels, nmin, minleaf, nfeat, classnames)
 
     def produceNextNode(self,
                         values,
@@ -75,6 +80,7 @@ class ClassificationTreeDM(object):
                         nmin,
                         minleaf,
                         nfeat,
+                        classes,
                         parent=None):
         ## If all elements are of the same class, no need to split
         if len(np.unique(labels)) < 2:
@@ -109,6 +115,7 @@ class ClassificationTreeDM(object):
                 ret = CTreeDMNode(parent,
                                   OpType.comparators.value[OpType.LESSTHANEQUALS.value],
                                   column,
+                                  columnname=classes[column],
                                   hasConstant=True,
                                   value=cutvalue)
                 ret.setLeft(
@@ -165,6 +172,7 @@ class CTreeDMNode(object):
                  parent,
                  operator,
                  columnIndex,
+                 columnname,
                  hasConstant=True,
                  value=None,
                  secondIndex=None):
@@ -174,6 +182,7 @@ class CTreeDMNode(object):
         self.hasConstant = hasConstant
         self.columnIndex = columnIndex
         self.secondIndex = secondIndex
+        self.columnname = columnname
 
     def setLeft(self, node):
         self.left = node
@@ -183,7 +192,7 @@ class CTreeDMNode(object):
 
     def print(self, tabs=0):
         return "".join(["\t" for i in range(tabs)]) + "Node. Column: " + str(
-            self.columnIndex) + "\t- Value on split: " + str(
+            self.columnname) + "\t- Value on split: " + str(
                 self.compvalue) + "\n" + self.left.print(
                     tabs + 1) + self.right.print(tabs + 1)
 
