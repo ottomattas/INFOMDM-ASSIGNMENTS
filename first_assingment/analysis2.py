@@ -31,7 +31,13 @@ nfeat = 41
 
 # Grow a tree
 print("Growing tree...")
-tree = tree_grow_b(tdata, classes, nmin, minleaf, nfeat, classnames=columns,m=100)
+tree = tree_grow_b(tdata,
+                   classes,
+                   nmin,
+                   minleaf,
+                   nfeat,
+                   classnames=columns,
+                   m=100)
 
 # Print the tree for debugging
 #print(tree)
@@ -48,4 +54,4 @@ test_data = test_data[columns]
 tdata = np.asarray(list(test_data[0]))
 for row in test_data[1:]:
     tdata = np.vstack((tdata, list(row)))
-print(calculateTreePerformanceStats(tdata,classes,tree,bagging=True))
+print(calculateTreePerformanceStats(tdata, classes, tree, bagging=True))
