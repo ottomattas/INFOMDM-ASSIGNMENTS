@@ -194,7 +194,7 @@ for row in train_data[1:]:
 nmin = 15
 minleaf = 5
 nfeat = 41
-print("Growing tree...")
+#print("Growing tree...")
 #print(train_data.dtype.names[32])
 tree = tree_grow(tdata, classes, nmin, minleaf, nfeat)
 print(tree)
@@ -203,7 +203,7 @@ test_data = np.genfromtxt('eclipse-metrics-packages-3.0.csv',
                           delimiter=';',
                           dtype=float,
                           names=True)
-classes = train_data["post"]
+classes = test_data["post"]
 classes[classes > 1] = 1
 test_data = test_data[columns]
 tdata = np.asarray(list(train_data[0]))
