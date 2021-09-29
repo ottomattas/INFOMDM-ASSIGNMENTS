@@ -201,7 +201,7 @@ nfeat = 41
 print("Growing tree...")
 #print(train_data.dtype.names[32])
 tree = tree_grow_b(tdata, classes, nmin, minleaf, nfeat, m=100)
-print(tree)
+#print(tree)
 
 test_data = np.genfromtxt('eclipse-metrics-packages-3.0.csv',
                           delimiter=';',
