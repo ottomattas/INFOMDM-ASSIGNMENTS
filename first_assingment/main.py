@@ -95,7 +95,7 @@ def tree_grow_b(x, y, nmin, minleaf, nfeat=None, m=1, classnames=None):
 
 
 def tree_pred_b(x, trees):
-    nelements = len(x[0])
+    nelements = x.shape[0]
     totalpreds = None
 
     ## Obtain each prediction and put them into a
