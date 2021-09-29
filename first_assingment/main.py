@@ -28,6 +28,30 @@ def tree_grow(x, y, nmin, minleaf, nfeat=None, classnames=None):
     return ClassificationTreeDM(x, y, nmin, minleaf, nfeat, classnames=classnames)
 
 
+
+'''
+### tree_pred()
+### Make predicitions using the tree.
+###
+### Arguments:
+###     x: 2-dimensional array of attribute values for predictions
+###     tr: Tree object with a predict(row) method
+###
+### Returns:
+###     List of class predictions for each element as predicted by the tree
+'''
+
+
+def tree_pred(x, tr):
+    predictions = []
+
+    for row in x:
+        pred = tr.predict(row)
+        predictions.append(pred)
+
+    return predictions
+
+
 '''
 ### tree_grow_b()
 ### Grow classification trees for bagging.
@@ -55,29 +79,6 @@ def tree_grow_b(x, y, nmin, minleaf, nfeat=None, m=1, classnames=None):
         ret.append(
             tree_grow(x[indexes, :], y[indexes], nmin, minleaf, nfeat, classnames=classnames))
     return ret
-
-
-'''
-### tree_pred()
-### Make predicitions using the tree.
-###
-### Arguments:
-###     x: 2-dimensional array of attribute values for predictions
-###     tr: Tree object with a predict(row) method
-###
-### Returns:
-###     List of class predictions for each element as predicted by the tree
-'''
-
-
-def tree_pred(x, tr):
-    predictions = []
-
-    for row in x:
-        pred = tr.predict(row)
-        predictions.append(pred)
-
-    return predictions
 
 
 '''
