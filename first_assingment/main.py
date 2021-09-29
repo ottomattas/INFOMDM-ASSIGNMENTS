@@ -1,11 +1,15 @@
 import numpy as np
+from tqdm import tqdm
 from collections import Counter
 from ClassificationTreeDM import OpType as op, ClassificationTreeDM
 
+# Define input data
 credit_data = np.genfromtxt('credit.txt', delimiter=',', skip_header=True)
+
 '''
 ### tree_grow()
-###
+### Grow a classification tree.
+### 
 ### Arguments:
 ###     x: 2-dimensional array of attribute values
 ###     y: 1-dimensional array of binary class labels
@@ -26,6 +30,7 @@ def tree_grow(x, y, nmin, minleaf, nfeat=None):
 
 '''
 ### tree_grow_b()
+### Grow classification trees for bagging.
 ###
 ### Arguments:
 ###     x: 2-dimensional array of attribute values
@@ -40,20 +45,21 @@ def tree_grow(x, y, nmin, minleaf, nfeat=None):
 ###     bootstrap sample of the data
 '''
 
-
+# Define a function for growing a tree for bagging
 def tree_grow_b(x, y, nmin, minleaf, nfeat=None, m=1):
     if nfeat is None:
         nfeat = x.shape[0]
     ret = []
-    for i in range(m):
+    for i in tqdm(range(m)):
         indexes = np.random.choice(range(x.shape[0]), size=x.shape[0])
         ret.append(
-            tree_grow(x[indexes, :], y[indexes, :], nmin, minleaf, nfeat))
+            tree_grow(x[indexes, :], y[indexes], nmin, minleaf, nfeat))
     return ret
 
 
 '''
 ### tree_pred()
+### Make predicitions using the tree.
 ###
 ### Arguments:
 ###     x: 2-dimensional array of attribute values for predictions
@@ -115,8 +121,12 @@ def tree_pred_b(x, trees):
 '''
 
 
-def calculateTreePerformanceStats(x, y, tree):
-    predicts = tree_pred(x, tree)
+def calculateTreePerformanceStats(x, y, tree, bagging=False):
+    # Check for bagging
+    if bagging:
+        predicts = tree_pred_b(x, tree)
+    else:
+        predicts = tree_pred(x, tree)
     tp = 0
     tn = 0
     fp = 0
@@ -196,8 +206,8 @@ minleaf = 5
 nfeat = 41
 #print("Growing tree...")
 #print(train_data.dtype.names[32])
-tree = tree_grow(tdata, classes, nmin, minleaf, nfeat)
-print(tree)
+tree = tree_grow_b(tdata, classes, nmin, minleaf, nfeat, m=100)
+#print(tree)
 
 test_data = np.genfromtxt('eclipse-metrics-packages-3.0.csv',
                           delimiter=';',
@@ -206,6 +216,7 @@ test_data = np.genfromtxt('eclipse-metrics-packages-3.0.csv',
 classes = test_data["post"]
 classes[classes > 1] = 1
 test_data = test_data[columns]
-tdata = np.asarray(list(train_data[0]))
-for row in train_data[1:]:
+tdata = np.asarray(list(test_data[0]))
+for row in test_data[1:]:
     tdata = np.vstack((tdata, list(row)))
+# print(calculateTreePerformanceStats(tdata,classes,tree,bagging=True))
