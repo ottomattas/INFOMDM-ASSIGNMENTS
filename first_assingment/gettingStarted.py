@@ -8,8 +8,11 @@ credit_data = np.genfromtxt('credit.txt', delimiter=',', skip_header=True)
 def impurity(array):
     cnt = Counter(array)
     keys = list(cnt.keys())
-    gini = (cnt[keys[0]] * cnt[keys[1]]) / math.pow(len(array), 2)
-    return gini
+    ret = 0
+    for k in keys:
+        pk = cnt[k] / len(array)
+        ret += pk * (1-pk)
+    return ret
 
 def bestsplit(x, y):
     n = len(x)
