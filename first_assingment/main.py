@@ -179,6 +179,8 @@ tree = tree_grow(credit_data[:, range(0, 5)], credit_data[:, 5], nmin, minleaf,
 print(tree)
 
 '''
+
+# Define the columns
 columns = [
     'pre', 'ACD_avg', 'ACD_max', 'ACD_sum', 'FOUT_avg', 'FOUT_max', 'FOUT_sum',
     'MLOC_avg', 'MLOC_max', 'MLOC_sum', 'NBD_avg', 'NBD_max', 'NBD_sum',
@@ -189,7 +191,8 @@ columns = [
     'VG_avg', 'VG_max', 'VG_sum', 'NOCU'
 ]
 
-print("Importing data...")
+# Import data for training
+print("Importing training data...")
 train_data = np.genfromtxt('eclipse-metrics-packages-2.0.csv',
                            delimiter=';',
                            dtype=float,
@@ -201,14 +204,20 @@ tdata = np.asarray(list(train_data[0]))
 for row in train_data[1:]:
     tdata = np.vstack((tdata, list(row)))
 
+# Define parameters for growing the tree
 nmin = 15
 minleaf = 5
 nfeat = 41
-#print("Growing tree...")
-#print(train_data.dtype.names[32])
+
+# Grow a tree
+print("Growing tree...")
 tree = tree_grow_b(tdata, classes, nmin, minleaf, nfeat, m=100)
+
+# Print the tree for debugging
 #print(tree)
 
+# Import data for training
+print("Importing testing data...")
 test_data = np.genfromtxt('eclipse-metrics-packages-3.0.csv',
                           delimiter=';',
                           dtype=float,
