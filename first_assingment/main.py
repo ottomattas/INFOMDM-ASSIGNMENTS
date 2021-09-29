@@ -198,7 +198,6 @@ for row in train_data[1:]:
 nmin = 15
 minleaf = 5
 nfeat = 41
-m = 100
 print("Growing tree...")
 #print(train_data.dtype.names[32])
 tree = tree_grow_b(tdata, classes, nmin, minleaf, nfeat, m=100)
