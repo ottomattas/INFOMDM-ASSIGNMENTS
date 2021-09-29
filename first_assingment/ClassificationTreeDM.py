@@ -124,6 +124,7 @@ class ClassificationTreeDM(object):
                                          nmin,
                                          minleaf,
                                          nfeat,
+                                         classes=classes,
                                          parent=ret))
                 ret.setRight(
                     self.produceNextNode(values[values[:, column] > cutvalue],
@@ -131,6 +132,7 @@ class ClassificationTreeDM(object):
                                          nmin,
                                          minleaf,
                                          nfeat,
+                                         classes=classes,
                                          parent=ret))
                 return ret
         return CTreeDMLeaf(labels)
