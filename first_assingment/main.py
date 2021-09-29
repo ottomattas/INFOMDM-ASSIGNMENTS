@@ -49,7 +49,7 @@ def tree_grow_b(x, y, nmin, minleaf, nfeat=None, m=1):
     for i in tqdm(range(m)):
         indexes = np.random.choice(range(x.shape[0]), size=x.shape[0])
         ret.append(
-            tree_grow(x[indexes, :], y[indexes, :], nmin, minleaf, nfeat))
+            tree_grow(x[indexes, :], y[indexes], nmin, minleaf, nfeat))
     return ret
 
 
