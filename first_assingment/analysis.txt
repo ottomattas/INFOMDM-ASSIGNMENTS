@@ -1,0 +1,31 @@
+Importing data...
+Printing Tree:
+Root Node. Column: 0	- Value on split: 4.0
+	Node. Column: 38	- Value on split: 26.0
+		Node. Column: 30	- Value on split: 54.5
+			Node. Column: 6	- Value on split: 142.0
+				Node. Column: 3	- Value on split: 0.0
+					Node. Column: 15	- Value on split: 15.5
+						Leaf. Elements: Counter({0.0: 55})						Leaf. Elements: Counter({0.0: 7, 1.0: 2})					Node. Column: 9	- Value on split: 90.0
+						Leaf. Elements: Counter({1.0: 3, 0.0: 2})						Node. Column: 2	- Value on split: 1.0
+							Leaf. Elements: Counter({0.0: 6, 1.0: 2})							Leaf. Elements: Counter({0.0: 14})				Node. Column: 10	- Value on split: 1.1577967232879072
+					Leaf. Elements: Counter({1.0: 6, 0.0: 1})					Node. Column: 27	- Value on split: 25.5
+						Node. Column: 19	- Value on split: 7.717142857142857
+							Node. Column: 0	- Value on split: 2.0
+								Node. Column: 21	- Value on split: 82.0
+									Node. Column: 12	- Value on split: 90.0
+										Leaf. Elements: Counter({0.0: 5, 1.0: 4})										Leaf. Elements: Counter({0.0: 11})									Leaf. Elements: Counter({1.0: 5, 0.0: 2})								Leaf. Elements: Counter({1.0: 7, 0.0: 1})							Node. Column: 9	- Value on split: 1420.0
+								Node. Column: 12	- Value on split: 80.5
+									Leaf. Elements: Counter({0.0: 4, 1.0: 1})									Leaf. Elements: Counter({0.0: 14})								Leaf. Elements: Counter({1.0: 3, 0.0: 2})						Node. Column: 0	- Value on split: 2.0
+							Leaf. Elements: Counter({0.0: 20})							Leaf. Elements: Counter({0.0: 5, 1.0: 1})			Leaf. Elements: Counter({1.0: 7, 0.0: 1})		Node. Column: 19	- Value on split: 9.380242311276795
+			Leaf. Elements: Counter({1.0: 8, 0.0: 6})			Leaf. Elements: Counter({1.0: 9})	Node. Column: 16	- Value on split: 0.15833333333333333
+		Node. Column: 0	- Value on split: 11.0
+			Node. Column: 4	- Value on split: 4.144095167405565
+				Node. Column: 11	- Value on split: 3.0
+					Leaf. Elements: Counter({1.0: 4, 0.0: 1})					Leaf. Elements: Counter({1.0: 17})				Node. Column: 4	- Value on split: 4.6535714285714285
+					Leaf. Elements: Counter({0.0: 5})					Node. Column: 29	- Value on split: 5.0
+						Leaf. Elements: Counter({0.0: 4, 1.0: 4})						Leaf. Elements: Counter({1.0: 9})			Node. Column: 10	- Value on split: 2.1307540267350937
+				Leaf. Elements: Counter({1.0: 69})				Leaf. Elements: Counter({1.0: 4, 0.0: 1})		Node. Column: 40	- Value on split: 7.0
+			Leaf. Elements: Counter({0.0: 11, 1.0: 2})			Node. Column: 4	- Value on split: 2.2017268596950563
+				Leaf. Elements: Counter({0.0: 7, 1.0: 7})				Node. Column: 20	- Value on split: 28.5
+					Leaf. Elements: Counter({1.0: 3, 0.0: 2})					Leaf. Elements: Counter({1.0: 13})
