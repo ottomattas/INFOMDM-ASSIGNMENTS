@@ -48,4 +48,4 @@ test_data = test_data[columns]
 tdata = np.asarray(list(test_data[0]))
 for row in test_data[1:]:
     tdata = np.vstack((tdata, list(row)))
-print(calculateTreePerformanceStats(tdata,classes,tree,bagging=False))
+print(calculateTreePerformanceStats(tdata, classes, tree, bagging=False))
