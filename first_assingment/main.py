@@ -41,7 +41,7 @@ def tree_grow(x, y, nmin, minleaf, nfeat=None):
 ###     bootstrap sample of the data
 '''
 
-
+# Define a function for growing a tree for bagging
 def tree_grow_b(x, y, nmin, minleaf, nfeat=None, m=1):
     if nfeat is None:
         nfeat = x.shape[0]
