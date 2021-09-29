@@ -210,6 +210,6 @@ test_data = np.genfromtxt('eclipse-metrics-packages-3.0.csv',
 classes = test_data["post"]
 classes[classes > 1] = 1
 test_data = test_data[columns]
-tdata = np.asarray(list(train_data[0]))
-for row in train_data[1:]:
+tdata = np.asarray(list(test_data[0]))
+for row in test_data[1:]:
     tdata = np.vstack((tdata, list(row)))
