@@ -4,7 +4,7 @@ from collections import Counter
 from ClassificationTreeDM import OpType as op, ClassificationTreeDM
 
 # Define input data
-credit_data = np.genfromtxt('credit.txt', delimiter=',', skip_header=True)
+credit_data = np.genfromtxt('Resources/credit.txt', delimiter=',', skip_header=True)
 
 '''
 ### tree_grow()
