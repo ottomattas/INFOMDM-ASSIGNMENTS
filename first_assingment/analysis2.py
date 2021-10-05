@@ -13,7 +13,7 @@ columns = [
 
 # Import data for training
 print("Importing training data...")
-train_data = np.genfromtxt('eclipse-metrics-packages-2.0.csv',
+train_data = np.genfromtxt('Resources/eclipse-metrics-packages-2.0.csv',
                            delimiter=';',
                            dtype=float,
                            names=True)

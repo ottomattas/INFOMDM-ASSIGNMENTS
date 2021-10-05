@@ -196,7 +196,7 @@ class CTreeDMNode(object):
         return "".join(["\t" for i in range(tabs)]) + "Node. Column: " + str(
             self.columnname) + "\t- Value on split: " + str(
                 self.compvalue) + "\n" + self.left.print(
-                    tabs + 1) + self.right.print(tabs + 1)
+                    tabs + 1) + "\n" + self.right.print(tabs + 1)
 
 
 '''
