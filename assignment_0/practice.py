@@ -5,8 +5,10 @@
 #######
 ### This script is for solving a classification problem
 '''
-
+import argparse
+import sys
 import numpy as np
+
 
 def calculate_impurity(array):
     '''Calculate impurity for a vector using gini-index as impurity measure
@@ -47,13 +49,41 @@ def calculate_impurity(array):
     # Return impurity
     return impurity
 
+
+# Create an argument parser
+parser = argparse.ArgumentParser(
+    description='Calculate impurity and best split for binary class structures.'
+)
+# Add positional argument for source file
+parser.add_argument('input',
+                    type=argparse.FileType('r'),
+                    help='Source file for input data')
+# Add optional positional argument for destination file
+parser.add_argument('output',
+                    nargs='?',
+                    type=argparse.FileType('w'),
+                    help='OPTIONAL: Destination file for recording results')
+# Parse the arguments
+args = parser.parse_args()
+
 # Import data to a numpy array
-import_data = np.genfromtxt('practice.txt', delimiter=',', dtype=int, names=True)
+import_data = np.genfromtxt(args.input, delimiter=',', dtype=int, names=True)
 # Print column names for debugging
 # print(import_data.dtype.names)
 
-# Define variable for the class column
+# Create an array from the class column
 class_data = import_data['class']
 
-# Print the impurity value for the binary class
-print(f'Impurity is: {calculate_impurity(class_data)}')
+# Check if positional argument for output file is present
+if args.output:
+    # Open the output file object
+    with open(args.output.name, 'w', encoding='utf-8') as sys.stdout:
+        # Print the results
+        print(f'Using file: {args.input.name}')
+        print(f'Impurity is: {calculate_impurity(class_data)}')
+        # Close the file object
+        sys.stdout.close()
+else:
+    # Print the results directly to terminal
+    print(f'Using file: {args.input.name}')
+    print(f'Impurity is: {calculate_impurity(class_data)}')
