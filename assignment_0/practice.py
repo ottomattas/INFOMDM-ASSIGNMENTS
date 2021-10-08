@@ -121,16 +121,15 @@ def calculate_best_split(array_x, array_y):
         weight_left = array_x[consider_left].shape[0] / n_elements
         weight_right = array_x[consider_right].shape[0] / n_elements
         # Calculate child node impurities
-        child_impurity_left, _ = calculate_impurity(
-            array_y[consider_left])
-        child_impurity_right, _ = calculate_impurity(
-            array_y[consider_right])
+        child_impurity_left, _ = calculate_impurity(array_y[consider_left])
+        child_impurity_right, _ = calculate_impurity(array_y[consider_right])
         # Calculate impurity reduction
         impurity_reduction = parent_impurity - (
             (weight_left * child_impurity_left) +
             (weight_right * child_impurity_right))
         # Find maximum impurity reduction
-        impurity_reduction_maximum = max(impurity_reduction_maximum, impurity_reduction)
+        impurity_reduction_maximum = max(impurity_reduction_maximum,
+                                         impurity_reduction)
         # Find best split based on maximum impurity reduction
         if impurity_reduction == impurity_reduction_maximum:
             best_split = elem
@@ -139,6 +138,7 @@ def calculate_best_split(array_x, array_y):
     # Print and return the best split
     print('Best split is: ', best_split)
     return best_split
+
 
 def get_args(argv=None):
     '''Create an argument parser
@@ -155,24 +155,31 @@ def get_args(argv=None):
         '''
     # Create an object for argument parser
     parser = argparse.ArgumentParser(
-        description='Calculate impurity and best split for binary class structures.',
-        formatter_class=argparse.RawTextHelpFormatter
-    )
+        description=
+        'Calculate impurity and best split for binary class structures.',
+        formatter_class=argparse.RawTextHelpFormatter)
     # Add positional argument for source file
     parser.add_argument('input',
                         type=argparse.FileType('r'),
                         help='Source file for input data')
     # Add optional positional argument for destination file
-    parser.add_argument('output',
-                        nargs='?',
-                        type=argparse.FileType('w'),
-                        help='OPTIONAL: Destination file for recording results')
+    parser.add_argument(
+        'output',
+        nargs='?',
+        type=argparse.FileType('w'),
+        help='OPTIONAL: Destination file for recording results')
     # Add positional argument for source file
-    parser.add_argument('-c', '--column', action='store', dest='column_name', default='income',
-                        help='Numeric field you would like to use for splitting  \n' +
-                            'Defaults to "income"')
+    parser.add_argument(
+        '-c',
+        '--column',
+        action='store',
+        dest='column_name',
+        default='income',
+        help='Numeric field you would like to use for splitting  \n' +
+        'Defaults to "income"')
     # Return the parser
     return parser.parse_args(argv)
+
 
 def main():
     '''Initialise the program
@@ -192,7 +199,10 @@ def main():
     args = get_args()
 
     # Import data to a numpy array
-    import_data = np.genfromtxt(args.input, delimiter=',', dtype=int, names=True)
+    import_data = np.genfromtxt(args.input,
+                                delimiter=',',
+                                dtype=int,
+                                names=True)
     # # Print column names for debugging
     # print(import_data.dtype.names)
 
@@ -224,6 +234,7 @@ def main():
         except ValueError:
             print('Numerical data not present')
             calculate_impurity(class_data)
+
 
 # Execute
 if __name__ == "__main__":
