@@ -139,8 +139,24 @@ def calculate_best_split(array_x, array_y):
     # Print and return the best split
     print('Best split is: ', best_split)
     return best_split
+
+def get_args(argv=None):
+    '''Create an argument parser
+
+        Parameters
+        ----------
+        argv : list
+            List of arguments to pass to the parser
+
+        Returns
+        -------
+        parser.parse_args(argv)
+            The parser object
+        '''
+    # Create an object for argument parser
 parser = argparse.ArgumentParser(
-    description='Calculate impurity and best split for binary class structures.'
+        description='Calculate impurity and best split for binary class structures.',
+        formatter_class=argparse.RawTextHelpFormatter
 )
 # Add positional argument for source file
 parser.add_argument('input',
@@ -151,8 +167,12 @@ parser.add_argument('output',
                     nargs='?',
                     type=argparse.FileType('w'),
                     help='OPTIONAL: Destination file for recording results')
-# Parse the arguments
-args = parser.parse_args()
+    # Add positional argument for source file
+    parser.add_argument('-c', '--column', action='store', dest='column_name', default='income',
+                        help='Numeric field you would like to use for splitting  \n' +
+                            'Defaults to "income"')
+    # Return the parser
+    return parser.parse_args(argv)
 
 # Import data to a numpy array
 import_data = np.genfromtxt(args.input, delimiter=',', dtype=int, names=True)
