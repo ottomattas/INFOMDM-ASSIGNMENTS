@@ -2,7 +2,7 @@ import numpy as np
 import math
 from collections import Counter
 
-credit_data = np.genfromtxt('credit.txt', delimiter=',', skip_header=True)
+credit_data = np.genfromtxt('Resources/credit.txt', delimiter=',', skip_header=True)
 
 
 def impurity(array):

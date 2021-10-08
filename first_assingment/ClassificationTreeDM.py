@@ -124,6 +124,7 @@ class ClassificationTreeDM(object):
                                          nmin,
                                          minleaf,
                                          nfeat,
+                                         classes=classes,
                                          parent=ret))
                 ret.setRight(
                     self.produceNextNode(values[values[:, column] > cutvalue],
@@ -131,6 +132,7 @@ class ClassificationTreeDM(object):
                                          nmin,
                                          minleaf,
                                          nfeat,
+                                         classes=classes,
                                          parent=ret))
                 return ret
         return CTreeDMLeaf(labels)
@@ -194,7 +196,7 @@ class CTreeDMNode(object):
         return "".join(["\t" for i in range(tabs)]) + "Node. Column: " + str(
             self.columnname) + "\t- Value on split: " + str(
                 self.compvalue) + "\n" + self.left.print(
-                    tabs + 1) + self.right.print(tabs + 1)
+                    tabs + 1) + "\n" + self.right.print(tabs + 1)
 
 
 '''
