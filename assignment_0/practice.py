@@ -154,19 +154,19 @@ def get_args(argv=None):
             The parser object
         '''
     # Create an object for argument parser
-parser = argparse.ArgumentParser(
+    parser = argparse.ArgumentParser(
         description='Calculate impurity and best split for binary class structures.',
         formatter_class=argparse.RawTextHelpFormatter
-)
-# Add positional argument for source file
-parser.add_argument('input',
-                    type=argparse.FileType('r'),
-                    help='Source file for input data')
-# Add optional positional argument for destination file
-parser.add_argument('output',
-                    nargs='?',
-                    type=argparse.FileType('w'),
-                    help='OPTIONAL: Destination file for recording results')
+    )
+    # Add positional argument for source file
+    parser.add_argument('input',
+                        type=argparse.FileType('r'),
+                        help='Source file for input data')
+    # Add optional positional argument for destination file
+    parser.add_argument('output',
+                        nargs='?',
+                        type=argparse.FileType('w'),
+                        help='OPTIONAL: Destination file for recording results')
     # Add positional argument for source file
     parser.add_argument('-c', '--column', action='store', dest='column_name', default='income',
                         help='Numeric field you would like to use for splitting  \n' +
@@ -191,19 +191,19 @@ def main():
     # Create argument parser
     args = get_args()
 
-# Import data to a numpy array
-import_data = np.genfromtxt(args.input, delimiter=',', dtype=int, names=True)
+    # Import data to a numpy array
+    import_data = np.genfromtxt(args.input, delimiter=',', dtype=int, names=True)
     # # Print column names for debugging
-# print(import_data.dtype.names)
+    # print(import_data.dtype.names)
 
-# Create an array from the class column
-class_data = import_data['class']
+    # Create an array from the class column
+    class_data = import_data['class']
 
-# Check if positional argument for output file is present
-if args.output:
-    # Open the output file object
-    with open(args.output.name, 'w', encoding='utf-8') as sys.stdout:
-        # Print the results
+    # Check if positional argument for output file is present
+    if args.output:
+        # Open the output file object
+        with open(args.output.name, 'w', encoding='utf-8') as sys.stdout:
+            # Print the results
             print(f'Input data: {args.input.name}')
             # Check for numerical data
             try:
@@ -212,10 +212,10 @@ if args.output:
             except ValueError:
                 print('Numerical data not present')
                 calculate_impurity(class_data)
-        # Close the file object
-        sys.stdout.close()
-else:
-    # Print the results directly to terminal
+            # Close the file object
+            sys.stdout.close()
+    else:
+        # Print the results directly to terminal
         print(f'Input data: {args.input.name}')
         # Check for numerical data
         try:
@@ -224,3 +224,7 @@ else:
         except ValueError:
             print('Numerical data not present')
             calculate_impurity(class_data)
+
+# Execute
+if __name__ == "__main__":
+    main()
