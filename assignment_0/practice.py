@@ -76,6 +76,69 @@ def calculate_splitpoint_candidates(array_x):
     print('Splitpoint candidates are: ', splitpoint_candidates)
     print('\n')
     return splitpoint_candidates, nx_elements
+
+
+def calculate_best_split(array_x, array_y):
+    '''Calculate best split for two vectors using gini-index as impurity measure
+
+        Parameters
+        ----------
+        array_x : array
+            The array of numerical attributes
+        array_y : array
+            The array of binary class labels
+
+        Returns
+        -------
+        bestsplit
+            The best split of two vectors  (of arbitrary length);
+            Best split is the split that maximizes the impurity reduction
+        '''
+    # Define variable for maximum impurity reduction
+    impurity_reduction_maximum = 0
+    # Calculate parent node impurity and get element count
+    parent_impurity, n_elements = calculate_impurity(array_y)
+    # Calculate splitpoint candidates
+    splitpoint_candidates, _ = calculate_splitpoint_candidates(array_x)
+    # For each candidate splitpoint
+    for elem in splitpoint_candidates:
+        # Print candidate splitpoint for debugging
+        print('Splitpoint candidate: ', elem)
+        # Define and reset variable for impurity reduction
+        impurity_reduction = 0
+        # Check which elements to consider for both child nodes
+        consider_left = array_x <= elem
+        consider_right = array_x > elem
+
+        # # Create array for both child nodes for debugging
+        # values_left = array_x[consider_left]
+        # values_right = array_x[consider_right]
+        # # Print child node arrays for debugging
+        # print('Child node on the left contains: ', values_left)
+        # print('Child node on the right contains: ', values_right)
+
+        # Calculate weights for both child nodes
+        weight_left = array_x[consider_left].shape[0] / n_elements
+        weight_right = array_x[consider_right].shape[0] / n_elements
+        # Calculate child node impurities
+        child_impurity_left, _ = calculate_impurity(
+            array_y[consider_left])
+        child_impurity_right, _ = calculate_impurity(
+            array_y[consider_right])
+        # Calculate impurity reduction
+        impurity_reduction = parent_impurity - (
+            (weight_left * child_impurity_left) +
+            (weight_right * child_impurity_right))
+        # Find maximum impurity reduction
+        impurity_reduction_maximum = max(impurity_reduction_maximum, impurity_reduction)
+        # Find best split based on maximum impurity reduction
+        if impurity_reduction == impurity_reduction_maximum:
+            best_split = elem
+        # Print empty line for visual clarity
+        print('\n')
+    # Print and return the best split
+    print('Best split is: ', best_split)
+    return best_split
 parser = argparse.ArgumentParser(
     description='Calculate impurity and best split for binary class structures.'
 )
