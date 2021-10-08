@@ -12,6 +12,7 @@ def impurity(array):
     for k in keys:
         pk = cnt[k] / len(array)
         ret += pk * (1-pk)
+    ret /= len(keys)
     return ret
 
 def bestsplit(x, y):
@@ -40,10 +41,11 @@ def bestsplit(x, y):
     candscores = sorted(candscores, key=lambda x: x[1])
     return {"value": candscores[0][0], "combined-gini": candscores[0][1]}
 
-
-'''print("Impurity for practice excercise:")
+print("Impurity for practice excercise:")
 print(impurity([1,0,1,1,1,0,0,1,1,0,1]))
 print("")
+
+'''
 
 print("Best-Split for practice excercise:")
 print(bestsplit(credit_data[:,3], credit_data[:,5]))
