@@ -12,44 +12,38 @@ import sys
 import numpy as np
 
 
-def calculate_impurity(array):
+def calculate_impurity(array_y):
     '''Calculate impurity for a vector using gini-index as impurity measure
 
         Parameters
         ----------
-        array : array
+        array_y : array
             The array of binary class labels
-
-        Raises
-        ------
-        RuntimeError
-            Out of fuel
 
         Returns
         -------
-        imp
-            Impurity of a vector of (arbitrary length) of class labels
+        impurity
+            Impurity of a vector (of arbitrary length) of class labels
+        ny_elements
+            Number of elements in the full array
         '''
     # Define variable for impurity
     impurity = 0
     # Flatten array to 1d, treat all values equally
-    array = array.flatten()
-    # Sort array values
-    array = np.sort(array)
+    array_y = array_y.flatten()
     # Count array elements
-    n_elements = array.shape[0]
+    ny_elements = array_y.shape[0]
     # Count 1s in array
-    ones = np.count_nonzero(array)
-    # Count 0s in array
-    zeros = n_elements - ones
+    ones = np.count_nonzero(array_y)
     # Probability of class 1
-    p_one = ones / n_elements
+    p_one = ones / ny_elements
     # Probability of class 0
-    p_zero = zeros / n_elements
+    p_zero = 1 - (ones / ny_elements)
     # Calculate impurity
     impurity = p_one * p_zero
-    # Return impurity
-    return impurity
+    # Print and return impurity and the number of elements
+    print('Impurity is: ', impurity)
+    return impurity, ny_elements
 
 
 # Create an argument parser
