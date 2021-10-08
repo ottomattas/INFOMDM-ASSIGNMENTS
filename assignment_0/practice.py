@@ -3,7 +3,9 @@
 ### -*- encoding: utf-8 -*-
 ### by Antonio Hernandez Oliva, Ghislaine van den Boogerd, Otto Mättas
 #######
-### This script is for solving a classification problem
+### This script is for solving two classification problems:
+### 1. Calculating impurity for a vector using gini-index as impurity measure
+### 2. Calculating best split for two vectors
 '''
 import argparse
 import sys
