@@ -46,7 +46,36 @@ def calculate_impurity(array_y):
     return impurity, ny_elements
 
 
-# Create an argument parser
+def calculate_splitpoint_candidates(array_x):
+    '''Calculate split candidates for two vectors using gini-index as impurity measure
+
+        Parameters
+        ----------
+        array_x : array
+            The array of numerical attributes
+
+        Returns
+        -------
+        splitpoint_candidates
+            Splitpoint candidates of a vector (of arbitrary length) of numerical values
+        ny_elements
+            Number of elements in the full array
+        '''
+    # Define array for splitpoint candidates
+    splitpoint_candidates = []
+    # Flatten array to 1d, treat all values equally
+    array_x = array_x.flatten()
+    # Count array elements
+    nx_elements = array_x.shape[0]
+    # Select and sort unique numerical values
+    unique_x, _ = np.unique(array_x, return_counts=True)
+    # Calculate candidate splitpoins
+    splitpoint_candidates = (np.delete(unique_x, -1) +
+                             np.delete(unique_x, 0)) / 2
+    # Print and return splitpoint candidates and the number of elements
+    print('Splitpoint candidates are: ', splitpoint_candidates)
+    print('\n')
+    return splitpoint_candidates, nx_elements
 parser = argparse.ArgumentParser(
     description='Calculate impurity and best split for binary class structures.'
 )
