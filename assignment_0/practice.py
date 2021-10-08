@@ -179,7 +179,7 @@ def main():
 
         Parameters
         ----------
-        args : 
+        args : obj
             Argument parser object
         import_data : array
             Import data for the numpy array
