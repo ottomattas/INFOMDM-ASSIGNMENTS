@@ -174,9 +174,26 @@ parser.add_argument('output',
     # Return the parser
     return parser.parse_args(argv)
 
+def main():
+    '''Initialise the program
+
+        Parameters
+        ----------
+        args : 
+            Argument parser object
+        import_data : array
+            Import data for the numpy array
+        class_data : array
+            Binary class information from import data
+        numerical_data : array
+            Optional: numerical values from import data
+        '''
+    # Create argument parser
+    args = get_args()
+
 # Import data to a numpy array
 import_data = np.genfromtxt(args.input, delimiter=',', dtype=int, names=True)
-# Print column names for debugging
+    # # Print column names for debugging
 # print(import_data.dtype.names)
 
 # Create an array from the class column
@@ -187,11 +204,23 @@ if args.output:
     # Open the output file object
     with open(args.output.name, 'w', encoding='utf-8') as sys.stdout:
         # Print the results
-        print(f'Using file: {args.input.name}')
-        print(f'Impurity is: {calculate_impurity(class_data)}')
+            print(f'Input data: {args.input.name}')
+            # Check for numerical data
+            try:
+                numerical_data = import_data[args.column_name]
+                calculate_best_split(numerical_data, class_data)
+            except ValueError:
+                print('Numerical data not present')
+                calculate_impurity(class_data)
         # Close the file object
         sys.stdout.close()
 else:
     # Print the results directly to terminal
-    print(f'Using file: {args.input.name}')
-    print(f'Impurity is: {calculate_impurity(class_data)}')
+        print(f'Input data: {args.input.name}')
+        # Check for numerical data
+        try:
+            numerical_data = import_data[args.column_name]
+            calculate_best_split(numerical_data, class_data)
+        except ValueError:
+            print('Numerical data not present')
+            calculate_impurity(class_data)
