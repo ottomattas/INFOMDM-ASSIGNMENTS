@@ -5,6 +5,8 @@ import random
 from tqdm import tqdm
 from collections import Counter
 
+NUMEXECUTIONS = 100
+
 '''
 ### tree_grow()
 ### Grow a classification tree.
@@ -430,22 +432,13 @@ nmin = 15
 minleaf = 5
 nfeat = 41
 
-# Grow a single tree
-print("Growing single tree...")
-single_tree = tree_grow(tdata, classes, nmin, minleaf, nfeat, classnames=columns)
-print("Done.")
 
-# Grow trees with bagging method
-print("Growing bagging trees...")
-bag_tree = tree_grow_b(tdata, classes, nmin, minleaf,
-                   nfeat, classnames=columns, m=100)
-print("Done.")
+print("Training trees...")
+trees = []
+for cycle in tqdm(range(NUMEXECUTIONS), desc='Bagging Trees'):
+    tree = tree_grow_b(tdata, classes, nmin, minleaf, nfeat, classnames=columns, m=100)
+    trees.append(tree)
 
-# Grow trees with random forest method
-print("Growing random forests trees...")
-forest_tree = tree_grow_b(tdata, classes, nmin, minleaf,
-                   nfeat=6, classnames=columns, m=100)
-print("Done.")
 
 # Import data for testing
 print("Importing testing data...")
@@ -459,6 +452,10 @@ test_data = test_data[columns]
 tdata = np.asarray(list(test_data[0]))
 for row in test_data[1:]:
     tdata = np.vstack((tdata, list(row)))
-print("Single Tree Performance Statistics:\n" + str(calculateTreePerformanceStats(tdata, classes, single_tree, bagging=False)))
-print("Bagging 100 Trees Performance Statistics:\n" + str(calculateTreePerformanceStats(tdata, classes, bag_tree, bagging=True)))
-print("Random Forest 100 Trees Performance Statistics:\n" + str(calculateTreePerformanceStats(tdata, classes, forest_tree, bagging=True)))
+
+print("Saving output...")
+outputfile = "output_bagging.txt"
+with open(outputfile, "w") as f:
+    for idx, tree in tqdm(enumerate(trees), desc="Printing statistics"):
+        f.write("Accuracy Run #" + str(idx+1) + ":\t" + str(calculateTreePerformanceStats(tdata, classes, tree, bagging=True)["accuracy"]) + "\n")
+print("Done. Result printed to \"" + outputfile + "\"")
