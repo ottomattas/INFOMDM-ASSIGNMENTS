@@ -4,7 +4,6 @@ import enum
 import random
 from tqdm import tqdm
 from collections import Counter
-
 '''
 ### tree_grow()
 ### Grow a classification tree.
@@ -19,11 +18,17 @@ from collections import Counter
 ### Returns:
 ###     A ClassificationTreeDM object with the generated tree
 '''
+
+
 def tree_grow(x, y, nmin, minleaf, nfeat=None, classnames=None):
     if nfeat is None:
         nfeat = len(x)
-    return ClassificationTreeDM(x, y, nmin, minleaf, nfeat, classnames=classnames)
-
+    return ClassificationTreeDM(x,
+                                y,
+                                nmin,
+                                minleaf,
+                                nfeat,
+                                classnames=classnames)
 
 
 '''
@@ -37,6 +42,8 @@ def tree_grow(x, y, nmin, minleaf, nfeat=None, classnames=None):
 ### Returns:
 ###     List of class predictions for each element as predicted by the tree
 '''
+
+
 def tree_pred(x, tr):
     predictions = []
 
@@ -63,6 +70,8 @@ def tree_pred(x, tr):
 ###     A list of m ClassificationTreeDM objects each trained with a
 ###     bootstrap sample of the data
 '''
+
+
 def tree_grow_b(x, y, nmin, minleaf, nfeat=None, m=1, classnames=None):
     if nfeat is None:
         nfeat = x.shape[0]
@@ -70,7 +79,12 @@ def tree_grow_b(x, y, nmin, minleaf, nfeat=None, m=1, classnames=None):
     for i in tqdm(range(m)):
         indexes = np.random.choice(range(x.shape[0]), size=x.shape[0])
         ret.append(
-            tree_grow(x[indexes, :], y[indexes], nmin, minleaf, nfeat, classnames=classnames))
+            tree_grow(x[indexes, :],
+                      y[indexes],
+                      nmin,
+                      minleaf,
+                      nfeat,
+                      classnames=classnames))
     return ret
 
 
@@ -85,6 +99,8 @@ def tree_grow_b(x, y, nmin, minleaf, nfeat=None, m=1, classnames=None):
 ###     List of class predictions for each element decided
 ###     by majority vote between all the trees
 '''
+
+
 def tree_pred_b(x, trees):
     nelements = x.shape[0]
     totalpreds = None
@@ -111,6 +127,8 @@ def tree_pred_b(x, trees):
 '''
 ### calculateTreePerformanceStats
 '''
+
+
 def calculateTreePerformanceStats(x, y, tree, bagging=False):
     # Check for bagging
     if bagging:
@@ -150,15 +168,17 @@ def calculateTreePerformanceStats(x, y, tree, bagging=False):
     }
     return results
 
+
 def impurity(array):
     cnt = Counter(array)
     keys = list(cnt.keys())
     ret = 0
     for k in keys:
         pk = cnt[k] / len(array)
-        ret += pk * (1-pk)
+        ret += pk * (1 - pk)
     ret /= len(keys)
     return ret
+
 
 def bestsplit(x, y):
     n = len(x)
@@ -174,18 +194,17 @@ def bestsplit(x, y):
         if len(np.unique(less)) < 2:
             sless = 0
         else:
-            sless = impurity(less) * (len(less)/n)
+            sless = impurity(less) * (len(less) / n)
         if len(np.unique(more)) < 2:
             smore = 0
         else:
-            smore = impurity(more) * (len(more)/n)
+            smore = impurity(more) * (len(more) / n)
         score = (sless + smore) / 2
         scores.append(score)
     candscores = [[candidates[idx], scores[idx]]
                   for idx in range(len(candidates))]
     candscores = sorted(candscores, key=lambda x: x[1])
     return {"value": candscores[0][0], "combined-gini": candscores[0][1]}
-
 
 
 '''
@@ -208,6 +227,8 @@ def bestsplit(x, y):
 ### These are the six operators a tree can use for each node. Each operator
 ### assigned a function to compare two values
 '''
+
+
 class OpType(enum.Enum):
     EQUALS = 1
     LESSTHAN = 2
@@ -226,9 +247,6 @@ class OpType(enum.Enum):
     }
 
 
-
-
-
 '''
 ### ClassificationTreeDM: Tree class
 ###
@@ -237,6 +255,8 @@ class OpType(enum.Enum):
 ###
 ###
 '''
+
+
 class ClassificationTreeDM(object):
     '''
     ### Constructor
@@ -253,7 +273,8 @@ class ClassificationTreeDM(object):
     def __init__(self, values, labels, nmin, minleaf, nfeat, classnames=None):
         if classnames is None:
             classnames = [str(i) for i in range(len(labels))]
-        self.root = self.produceNextNode(values, labels, nmin, minleaf, nfeat, classnames)
+        self.root = self.produceNextNode(values, labels, nmin, minleaf, nfeat,
+                                         classnames)
 
     def produceNextNode(self,
                         values,
@@ -293,12 +314,13 @@ class ClassificationTreeDM(object):
             nleft = values[values[:, column] <= cutvalue].shape[0]
             nright = values[values[:, column] > cutvalue].shape[0]
             if nleft >= minleaf and nright >= minleaf:
-                ret = CTreeDMNode(parent,
-                                  OpType.comparators.value[OpType.LESSTHANEQUALS.value],
-                                  column,
-                                  columnname=classes[column],
-                                  hasConstant=True,
-                                  value=cutvalue)
+                ret = CTreeDMNode(
+                    parent,
+                    OpType.comparators.value[OpType.LESSTHANEQUALS.value],
+                    column,
+                    columnname=classes[column],
+                    hasConstant=True,
+                    value=cutvalue)
                 ret.setLeft(
                     self.produceNextNode(values[values[:, column] <= cutvalue],
                                          labels[values[:, column] <= cutvalue],
@@ -345,6 +367,8 @@ class ClassificationTreeDM(object):
 ### hasConstant and secondIndex are used to compare between attributes
 ### instead to numeric constants (currently unused)
 '''
+
+
 class CTreeDMNode(object):
 
     isLeaf = False
@@ -384,6 +408,8 @@ class CTreeDMNode(object):
 ### Stores an array with all the classes for the individuals
 ### the leaf represents
 '''
+
+
 class CTreeDMLeaf(object):
 
     isLeaf = True
@@ -395,7 +421,8 @@ class CTreeDMLeaf(object):
         return self.cnt.most_common(1)[0][0]
 
     def print(self, tabs=0):
-        return "".join(["\t" for i in range(tabs)]) + "Leaf. Elements: " + str(self.cnt)
+        return "".join(["\t" for i in range(tabs)]) + "Leaf. Elements: " + str(
+            self.cnt)
 
 
 '''
@@ -410,7 +437,8 @@ columns = [
     'NOM_avg', 'NOM_max', 'NOM_sum', 'NOT_avg', 'NOT_max', 'NOT_sum',
     'NSF_avg', 'NSF_max', 'NSF_sum', 'NSM_avg', 'NSM_max', 'NSM_sum',
     'PAR_avg', 'PAR_max', 'PAR_sum', 'TLOC_avg', 'TLOC_max', 'TLOC_sum',
-    'VG_avg', 'VG_max', 'VG_sum', 'NOCU']
+    'VG_avg', 'VG_max', 'VG_sum', 'NOCU'
+]
 
 # Import data for training
 print("Importing training data...")
@@ -432,19 +460,34 @@ nfeat = 41
 
 # Grow a single tree
 print("Growing single tree...")
-single_tree = tree_grow(tdata, classes, nmin, minleaf, nfeat, classnames=columns)
+single_tree = tree_grow(tdata,
+                        classes,
+                        nmin,
+                        minleaf,
+                        nfeat,
+                        classnames=columns)
 print("Done.")
 
 # Grow trees with bagging method
 print("Growing bagging trees...")
-bag_tree = tree_grow_b(tdata, classes, nmin, minleaf,
-                   nfeat, classnames=columns, m=100)
+bag_tree = tree_grow_b(tdata,
+                       classes,
+                       nmin,
+                       minleaf,
+                       nfeat,
+                       classnames=columns,
+                       m=100)
 print("Done.")
 
 # Grow trees with random forest method
 print("Growing random forests trees...")
-forest_tree = tree_grow_b(tdata, classes, nmin, minleaf,
-                   nfeat=6, classnames=columns, m=100)
+forest_tree = tree_grow_b(tdata,
+                          classes,
+                          nmin,
+                          minleaf,
+                          nfeat=6,
+                          classnames=columns,
+                          m=100)
 print("Done.")
 
 # Import data for testing
@@ -459,6 +502,10 @@ test_data = test_data[columns]
 tdata = np.asarray(list(test_data[0]))
 for row in test_data[1:]:
     tdata = np.vstack((tdata, list(row)))
-print("Single Tree Performance Statistics:\n" + str(calculateTreePerformanceStats(tdata, classes, single_tree, bagging=False)))
-print("Bagging 100 Trees Performance Statistics:\n" + str(calculateTreePerformanceStats(tdata, classes, bag_tree, bagging=True)))
-print("Random Forest 100 Trees Performance Statistics:\n" + str(calculateTreePerformanceStats(tdata, classes, forest_tree, bagging=True)))
+print("Single Tree Performance Statistics:\n" + str(
+    calculateTreePerformanceStats(tdata, classes, single_tree, bagging=False)))
+print(
+    "Bagging 100 Trees Performance Statistics:\n" +
+    str(calculateTreePerformanceStats(tdata, classes, bag_tree, bagging=True)))
+print("Random Forest 100 Trees Performance Statistics:\n" + str(
+    calculateTreePerformanceStats(tdata, classes, forest_tree, bagging=True)))
