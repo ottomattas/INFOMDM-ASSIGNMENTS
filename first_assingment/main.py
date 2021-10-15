@@ -1,7 +1,9 @@
 '''
 ###!/bin/python3
 ### -*- encoding: utf-8 -*-
-### by Antonio Hernandez Oliva, Ghislaine van den Boogerd, Otto Mättas
+### by Antonio Hernandez Oliva (0685143),
+### Ghislaine van den Boogerd (9489479), 
+### Otto Mättas (6324363)
 #######
 '''
 import numpy as np
