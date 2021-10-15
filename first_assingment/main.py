@@ -1,3 +1,9 @@
+'''
+###!/bin/python3
+### -*- encoding: utf-8 -*-
+### by Antonio Hernandez Oliva, Ghislaine van den Boogerd, Otto Mättas
+#######
+'''
 import numpy as np
 import math
 import enum
