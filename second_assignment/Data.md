@@ -27,10 +27,18 @@ Review character length, number of sentences, average sentence length..., etc. T
 
 #### Idk, anything else you guys can come up with? :P
 
+Things to consider:
+- Normalising the data;
+- Cross-validation 
 difficulties faced by liars in encoding spatial information
-a plausible relationship between deceptive opinion spam and imaginative writing, based on POS distributional similarities
+  - nltk: spatial category, look into it.
+a plausible relationship between deceptive opinion spam and imaginative writing, based on POS distributional similarities.
+  - check it out if we can compute this.
+The SVM cost parameter, C, is tuned by nested cross-validation on the training data.
+  - cross-validation. 
 the top 5 highest weighted features for each class
-The SVM cost parameter, C, is tuned by nested cross-validation on the training data
+  - normalising the data.
+  - scikit-learn. freqdata, smth like that.
 
 
 three types of language features: 
