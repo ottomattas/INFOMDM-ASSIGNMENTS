@@ -29,19 +29,9 @@ Review character length, number of sentences, average sentence length..., etc. T
 
 Things to consider:
 - Normalising the data;
-- Cross-validation 
-difficulties faced by liars in encoding spatial information
-  - nltk: spatial category, look into it.
-a plausible relationship between deceptive opinion spam and imaginative writing, based on POS distributional similarities.
-  - check it out if we can compute this.
-The SVM cost parameter, C, is tuned by nested cross-validation on the training data.
-  - cross-validation. 
-the top 5 highest weighted features for each class
-  - normalising the data.
-  - scikit-learn. freqdata, smth like that.
-
-
-three types of language features: 
-(1) changes in first-person singular use, often attributed to psychological distancing (Newman et al., 2003), 
-(2) decreased spatial awareness and more narrative form, consistent with theories of reality monitoring (Johnson and Raye, 1981) and imaginative writing (Biber et al., 1999; Rayson et al., 2001), more verbs relative to nouns than truthful
-(3) increased negative emotion terms, often attributed to leakage cues (Ekman and Friesen, 1969), but perhaps better explained in our case as an exaggeration of the underlying review sentiment.
+- Cross-validation;
+- Extra attributes for falsified data detection:
+  - changes in first-person singular use, often attributed to psychological distancing (Newman et al., 2003);
+  - decreased spatial awareness and more narrative form, consistent with theories of reality monitoring (Johnson and Raye, 1982) and imaginative writing (Biber et al., 1999; Rayson et al., 2001), more verbs relative to nouns than truthful;
+  - increased negative emotion terms, often attributed to leakage cues (Ekman and Friesen, 1969), but perhaps better explained in our case as an exaggeration of the underlying review sentiment;
+- Top 5 highest weighted features for each class;
