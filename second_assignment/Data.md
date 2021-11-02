@@ -26,3 +26,12 @@ NLTK is a library to deal with text processing, and has an analyzer to detect se
 Review character length, number of sentences, average sentence length..., etc. These can be several added parameters that may or may not help some classifiers perform better. We can try these to see if they shake up the performance, for example.
 
 #### Idk, anything else you guys can come up with? :P
+
+Things to consider:
+- Normalising the data;
+- Cross-validation;
+- Extra attributes for falsified data detection:
+  - changes in first-person singular use, often attributed to psychological distancing (Newman et al., 2003);
+  - decreased spatial awareness and more narrative form, consistent with theories of reality monitoring (Johnson and Raye, 1982) and imaginative writing (Biber et al., 1999; Rayson et al., 2001), more verbs relative to nouns than truthful;
+  - increased negative emotion terms, often attributed to leakage cues (Ekman and Friesen, 1969), but perhaps better explained in our case as an exaggeration of the underlying review sentiment;
+- Top 5 highest weighted features for each class;
