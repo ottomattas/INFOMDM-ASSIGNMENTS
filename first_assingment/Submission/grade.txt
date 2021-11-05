@@ -1,0 +1,7 @@
+Practical Assignment 1
+
+Final = 0.25*Rep+0.75*Code+Bonus
+
+Rep: 8.3
+Code: 7.5
+Final: 7.7
