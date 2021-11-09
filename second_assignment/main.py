@@ -25,7 +25,6 @@ nltk.download('averaged_perceptron_tagger')
 
 VERBFEATURES = 4
 NRUNS = 100
-
 '''
 ### important_features(trainvectorizer, trainset,
 ###             trainclasses, clfclass, **parameters,
@@ -47,9 +46,21 @@ NRUNS = 100
 ### Returns:
 ###     list:               Top 10 features
 '''
-def important_features(trainvectorizer, trainset, trainclasses, clfclass,
-                            extrafeatures=12, nfeats=10, nruns=30, **parameters):
-    vocab = [word for word, idx in sorted(trainvectorizer.vocabulary_.items(), key=lambda x:x[1], reverse=True)]
+
+
+def important_features(trainvectorizer,
+                       trainset,
+                       trainclasses,
+                       clfclass,
+                       extrafeatures=12,
+                       nfeats=10,
+                       nruns=30,
+                       **parameters):
+    vocab = [
+        word for word, idx in sorted(trainvectorizer.vocabulary_.items(),
+                                     key=lambda x: x[1],
+                                     reverse=True)
+    ]
 
     matrix = []
     for i in tqdm(range(nruns)):
@@ -57,12 +68,13 @@ def important_features(trainvectorizer, trainset, trainclasses, clfclass,
         clf.fit(trainset, trainclasses)
         matrix.append(clf.feature_importances_)
 
-
     matrix = np.matrix(matrix)
     matrix = np.add.reduce(matrix, 0)
     matrix /= nruns
 
-    featssorted = sorted(list(enumerate(matrix.tolist()[0])), key=lambda x:x[1], reverse=True)
+    featssorted = sorted(list(enumerate(matrix.tolist()[0])),
+                         key=lambda x: x[1],
+                         reverse=True)
     outfeats = []
     for feats in featssorted:
         idx, score = feats
@@ -74,6 +86,7 @@ def important_features(trainvectorizer, trainset, trainclasses, clfclass,
 
     outfeats = outfeats[:nfeats]
     return outfeats
+
 
 '''
 ### toSpanish(text)
@@ -88,11 +101,14 @@ def important_features(trainvectorizer, trainset, trainclasses, clfclass,
 ### Returns:
 ###     string: translated text
 '''
+
+
 def toSpanish(text):
     tr = Translator()
     out = tr.translate(text, dest='es', src='en')
     time.sleep(0.6)
     return out.text
+
 
 '''
 ### getVerbsSpanish(text)
@@ -112,6 +128,8 @@ def toSpanish(text):
 ###     dict: Dict containing data for number, time and person
 ###           of the verb, as well as the verb
 '''
+
+
 def getVerbsSpanish(text):
     text = toSpanish(text)
     parsed = ESPparse(text, lemmata=False, tokenize=True)
@@ -126,9 +144,18 @@ def getVerbsSpanish(text):
         tenses = ESPtenses(verb)
         if tenses:
             time, person, number, tone, mode = ESPtenses(verb)[0]
-            ret.append({"number":number if time != 'infinitive' and (time != 'past' and person is not None) else 0,
-                    "person":person if time != 'infinitive' and (time == 'past' and person is not None) else 0,
-                    "time":time, "verb":verb})
+            ret.append({
+                "number":
+                number if time != 'infinitive' and
+                (time != 'past' and person is not None) else 0,
+                "person":
+                person if time != 'infinitive' and
+                (time == 'past' and person is not None) else 0,
+                "time":
+                time,
+                "verb":
+                verb
+            })
     return ret
 
 
@@ -149,20 +176,23 @@ def getVerbsSpanish(text):
 ### Returns:
 ###     matrix: Numpy array of size (1,6)
 '''
+
+
 def fetchVerbFeatures(text):
     verbs = getVerbsSpanish(text)
-    persons = Counter(map(lambda x:x["person"], verbs))
-    times = Counter(map(lambda x:x["number"], verbs))
+    persons = Counter(map(lambda x: x["person"], verbs))
+    times = Counter(map(lambda x: x["number"], verbs))
     times[0] = times.pop("singular") if "singular" in times.keys() else 0.0
     times[1] = times.pop("plural") if "plural" in times.keys() else 0.0
     verbinfo = [0 for _ in range(6)]
     for idx in persons.keys():
         verbinfo[idx] = persons[idx]
     for idx in times.keys():
-        verbinfo[4+idx] = times[idx]
+        verbinfo[4 + idx] = times[idx]
     total = len(verbs) if len(verbs) > 0 else 1
-    verbinfo = list(map(lambda x:x/total, verbinfo))
+    verbinfo = list(map(lambda x: x / total, verbinfo))
     return verbinfo
+
 
 '''
 ### fetchCapitalLetterRatio(text)
@@ -177,8 +207,12 @@ def fetchVerbFeatures(text):
 ###                       of sentences and FPS pronoun
 ###     ratiopropernouns: Ratio of capitalization of proper nouns
 '''
+
+
 def fetchCapitalLetterRatio(text):
-    sentences = [x for x in text.replace("...", ".").split(".") if x is not None]
+    sentences = [
+        x for x in text.replace("...", ".").split(".") if x is not None
+    ]
     ## Get first words of sentence
     ## and check the first letter for capital letters
     firstwords = []
@@ -188,16 +222,24 @@ def fetchCapitalLetterRatio(text):
         if re.match(r'^\s*[A-Za-z]+', sentence):
             firstwords.append(words[0])
         firstwords += personalI
-        
+
         tagged_sent = pos_tag(sentence.split())
-        propernouns = [word_type[0] for word_type in tagged_sent if word_type[1][:3] == 'NNP']
-    
+        propernouns = [
+            word_type[0] for word_type in tagged_sent
+            if word_type[1][:3] == 'NNP'
+        ]
+
     if len(propernouns) < 1:
         ratiopropernouns = 1.0
     else:
-        ratiopropernouns = sum([1 if re.match(r'^\s*[A-Z]', w) else 0 for w in propernouns])/len(propernouns)
-    ratiocapitalize = sum([1 if re.match(r'^\s*[A-Z]', w) else 0 for w in firstwords])/len(firstwords)
+        ratiopropernouns = sum(
+            [1 if re.match(r'^\s*[A-Z]', w) else 0
+             for w in propernouns]) / len(propernouns)
+    ratiocapitalize = sum(
+        [1 if re.match(r'^\s*[A-Z]', w) else 0
+         for w in firstwords]) / len(firstwords)
     return [ratiocapitalize, ratiopropernouns]
+
 
 '''
 ### applySigmoid(x)
@@ -209,8 +251,11 @@ def fetchCapitalLetterRatio(text):
 ### Returns:
 ###     float: Sigmoid value of x
 '''
+
+
 def applySigmoid(x):
-    return 1/(1 + np.exp(-x))
+    return 1 / (1 + np.exp(-x))
+
 
 '''
 ### getTextMetaData(documents)
@@ -232,6 +277,8 @@ def applySigmoid(x):
 ### Returns:
 ###     matrix: numpy matrix of size (ndocs, 12)
 '''
+
+
 def getTextMetaData(documents):
     ret = []
     for doc in tqdm(documents, desc="Extracting text metadata"):
@@ -251,9 +298,10 @@ def getTextMetaData(documents):
 
     ret = np.matrix(ret)
     ## Reduce sentiment compound value to range (0,1)
-    ret[:,-1] = applySigmoid(ret[:,-1])
+    ret[:, -1] = applySigmoid(ret[:, -1])
 
     return ret
+
 
 '''
 ### fetchScores(clf, test, testlabels)
@@ -270,6 +318,8 @@ def getTextMetaData(documents):
 ###     dict: Containing accuracy, the f1 score, precision, recall,
 ###           specificity and the negative prediction values
 '''
+
+
 def fetchScores(clf, test, testlabels):
     preds = []
     preds = clf.predict(test)
@@ -284,9 +334,15 @@ def fetchScores(clf, test, testlabels):
     specificity = recall_score(flipped_labels, flipped_preds)
     npv = precision_score(flipped_labels, flipped_preds)
 
-    return {"accuracy":acc, "f1score":f1,
-            "precision":prec, "negativepredvalue":npv,
-            "recall":recall, "specificity":specificity}
+    return {
+        "accuracy": acc,
+        "f1score": f1,
+        "precision": prec,
+        "negativepredvalue": npv,
+        "recall": recall,
+        "specificity": specificity
+    }
+
 
 '''
 ### saveBootstrapStats(clf, test, testlabels, indexes, filename)
@@ -302,16 +358,25 @@ def fetchScores(clf, test, testlabels):
 ###     indexes:    Matrix of size (nbootstraps, nsamples) of indexes to bootstrap with
 ###     filename:   Name of the output file
 '''
+
+
 def saveBootstrapStats(clf, test, testlabels, indexes, filename=""):
     with open(filename, "w") as f:
-        f.write("accuracy\tf1score\tprecision\tnegativepredvalue\trecall\tspecificity\n")
+        f.write(
+            "accuracy\tf1score\tprecision\tnegativepredvalue\trecall\tspecificity\n"
+        )
         for nextrow in tqdm(indexes, desc="Getting performance data"):
             labidx = [testlabels[idx] for idx in nextrow]
-            testdocs = np.take(test, nextrow, 0)            
+            testdocs = np.take(test, nextrow, 0)
             score = fetchScores(clf, testdocs, labidx)
-            f.write(str(round(score["accuracy"], 4)) + "\t" + str(round(score["f1score"], 4)) + "\t" +
-                    str(round(score["precision"], 4)) + "\t" + str(round(score["negativepredvalue"], 4)) + "\t" +
-                    str(round(score["recall"], 4)) + "\t" + str(round(score["specificity"], 4)) + "\n")
+            f.write(
+                str(round(score["accuracy"], 4)) + "\t" +
+                str(round(score["f1score"], 4)) + "\t" +
+                str(round(score["precision"], 4)) + "\t" +
+                str(round(score["negativepredvalue"], 4)) + "\t" +
+                str(round(score["recall"], 4)) + "\t" +
+                str(round(score["specificity"], 4)) + "\n")
+
 
 '''
 ### scoreBayes(trainset, train_classes, testset, test_classes,
@@ -335,10 +400,17 @@ def saveBootstrapStats(clf, test, testlabels, indexes, filename=""):
 ###             "score": Accuracy
 ###             "classifier": Classifier
 '''
-def scoreBayes(trainset, trainclasses, testset, testclasses, sfactor_start=0.1,
-                        sfactor_end=10, sfactor_step=0.1):
 
-    ret = {'sfactor':0, 'score':0, 'classifier':None}
+
+def scoreBayes(trainset,
+               trainclasses,
+               testset,
+               testclasses,
+               sfactor_start=0.1,
+               sfactor_end=10,
+               sfactor_step=0.1):
+
+    ret = {'sfactor': 0, 'score': 0, 'classifier': None}
     ## Train Naive-Bayes
     for smoothingfactor in tqdm(np.arange(sfactor_start, sfactor_end,
                                           sfactor_step),
@@ -349,9 +421,13 @@ def scoreBayes(trainset, trainclasses, testset, testclasses, sfactor_start=0.1,
         nb.fit(trainset, trainclasses)
         score = nb.score(testset, testclasses)
         if ret['score'] < score:
-            ret = {'sfactor':smoothingfactor, 'score':score,
-                'classifier':nb}
+            ret = {
+                'sfactor': smoothingfactor,
+                'score': score,
+                'classifier': nb
+            }
     return ret
+
 
 '''
 ### scoreLogReg(trainset, train_classes, testset, test_classes,
@@ -375,12 +451,11 @@ def scoreBayes(trainset, trainclasses, testset, testclasses, sfactor_start=0.1,
 ###             "score": Accuracy
 ###             "classifier": Classifier
 '''
-def scoreLogReg(trainset, train_classes, testset, test_classes,
-            lambda_start=0.1, lambda_end=10, lambda_step=0.1):
 
-def scoreLogReg(train_ngram,
+
+def scoreLogReg(trainset,
                 train_classes,
-                test_ngrams,
+                testset,
                 test_classes,
                 lambda_start=0.1,
                 lambda_end=10,
@@ -397,6 +472,7 @@ def scoreLogReg(train_ngram,
         if ret['score'] < score:
             ret = {'lambda': lambd, 'score': score, 'classifier': logreg}
     return ret
+
 
 '''
 ### scoreRandomForests(trainset, train_classes, testset, test_classes,
@@ -421,12 +497,19 @@ def scoreLogReg(train_ngram,
 ###             "score": Accuracy
 ###             "classifier": Classifier
 '''
-def scoreRandomForests(trainset, train_classes, testset, test_classes,
-            ntrees_start=50, ntrees_end=500, ntrees_step=40,
-            nfeats_range=(0.05,1,0.1)):
+
+
+def scoreRandomForests(trainset,
+                       train_classes,
+                       testset,
+                       test_classes,
+                       ntrees_start=50,
+                       ntrees_end=500,
+                       ntrees_step=40,
+                       nfeats_range=(0.05, 1, 0.1)):
     nfeats_start, nfeats_end, nfeats_step = nfeats_range
 
-    ret = {'ntrees':0, 'nfeats':0, 'score':0, 'classifier':None}
+    ret = {'ntrees': 0, 'nfeats': 0, 'score': 0, 'classifier': None}
     max_feats = trainset.shape[1]
 
     for ntrees in tqdm(np.arange(ntrees_start, ntrees_end, ntrees_step),
@@ -436,7 +519,8 @@ def scoreRandomForests(trainset, train_classes, testset, test_classes,
                              desc="Testing different number of features",
                              leave=False):
             nfeats = round(featprop * max_feats)
-            rf = RandomForestClassifier(n_estimators=ntrees, max_features=nfeats)
+            rf = RandomForestClassifier(n_estimators=ntrees,
+                                        max_features=nfeats)
             rf.fit(trainset, train_classes)
             score = rf.score(testset, test_classes)
             if ret['score'] < score:
@@ -447,6 +531,7 @@ def scoreRandomForests(trainset, train_classes, testset, test_classes,
                     'classifier': rf
                 }
     return ret
+
 
 '''
 ### scoreDecisionTree(trainset, train_classes, testset, test_classes,
@@ -478,9 +563,16 @@ def scoreRandomForests(trainset, train_classes, testset, test_classes,
 ###             "score":      Accuracy
 ###             "classifier": Classifier
 '''
-def scoreDecisionTree(trainset, train_classes, testset, test_classes,
-            alpha_range=(0.0,10,0.3), maxdepth_range=(5,50,3), minleaf_range=(2,30,3),
-                minsplit_range=(5,40,3)):
+
+
+def scoreDecisionTree(trainset,
+                      train_classes,
+                      testset,
+                      test_classes,
+                      alpha_range=(0.0, 10, 0.3),
+                      maxdepth_range=(5, 50, 3),
+                      minleaf_range=(2, 30, 3),
+                      minsplit_range=(5, 40, 3)):
 
     alpha_start, alpha_end, alpha_step = alpha_range
     maxdepth_start, maxdepth_end, maxdepth_step = maxdepth_range
@@ -502,9 +594,13 @@ def scoreDecisionTree(trainset, train_classes, testset, test_classes,
                           desc="Testing different alpha values",
                           leave=False):
             for minleaf in range(minleaf_start, minleaf_end, minleaf_step):
-                for minsplit in range(minsplit_start, minsplit_end, minsplit_step):
-                    dt = DecisionTreeClassifier(max_depth=maxdepth, ccp_alpha=alpha,
-                            min_samples_split=minsplit, min_samples_leaf=minleaf, max_features='log2')
+                for minsplit in range(minsplit_start, minsplit_end,
+                                      minsplit_step):
+                    dt = DecisionTreeClassifier(max_depth=maxdepth,
+                                                ccp_alpha=alpha,
+                                                min_samples_split=minsplit,
+                                                min_samples_leaf=minleaf,
+                                                max_features='log2')
                     dt.fit(trainset, train_classes)
                     score = dt.score(testset, test_classes)
                     if ret['score'] < score:
@@ -531,29 +627,43 @@ if __name__ == '__main__':
     negatruth = [x for x in traindataset if 'truthful' in x]
     negafalse = [x for x in traindataset if 'deceptive' in x]
 
-    bootstrap_indexes = [sklearn.utils.resample(list(range(len(testdataset))), n_samples=len(testdataset), replace=True) for _ in range(len(testdataset))]
-    
+    bootstrap_indexes = [
+        sklearn.utils.resample(list(range(len(testdataset))),
+                               n_samples=len(testdataset),
+                               replace=True) for _ in range(len(testdataset))
+    ]
+
     print("Tokenizing the unigram features")
-    trainvectorizer = CountVectorizer(input="filename", ngram_range=(1,1), strip_accents='unicode')
+    trainvectorizer = CountVectorizer(input="filename",
+                                      ngram_range=(1, 1),
+                                      strip_accents='unicode')
     unigrams = trainvectorizer.fit_transform(negafalse + negatruth)
 
-
     print("Tokenizing the unigram+bigram features")
-    trainvectorizer_bi = CountVectorizer(input="filename", ngram_range=(1,2), strip_accents='unicode')    
+    trainvectorizer_bi = CountVectorizer(input="filename",
+                                         ngram_range=(1, 2),
+                                         strip_accents='unicode')
     unibigrams = trainvectorizer_bi.fit_transform(negafalse + negatruth)
     trainclasses = [0 for x in negafalse] + [1 for x in negatruth]
-    
+
     unigrams /= unigrams.sum(axis=1)
     unibigrams /= unibigrams.sum(axis=1)
 
-    extrafeats = getTextMetaData(traindataset)    
+    extrafeats = getTextMetaData(traindataset)
     unigrams = np.hstack((extrafeats, unigrams))
     unibigrams = np.hstack((extrafeats, unibigrams))
-    
-    
+
     print("Opening and tokenizing the test documents...")
-    testdocs = CountVectorizer(input="filename", ngram_range=(1,1), strip_accents='unicode', vocabulary=trainvectorizer.vocabulary_).fit_transform(testdataset)
-    testdocs_bi = CountVectorizer(input="filename", ngram_range=(1,2), strip_accents='unicode', vocabulary=trainvectorizer_bi.vocabulary_).fit_transform(testdataset)
+    testdocs = CountVectorizer(
+        input="filename",
+        ngram_range=(1, 1),
+        strip_accents='unicode',
+        vocabulary=trainvectorizer.vocabulary_).fit_transform(testdataset)
+    testdocs_bi = CountVectorizer(
+        input="filename",
+        ngram_range=(1, 2),
+        strip_accents='unicode',
+        vocabulary=trainvectorizer_bi.vocabulary_).fit_transform(testdataset)
     testdocs /= testdocs.sum(axis=1)
     testdocs_bi /= testdocs_bi.sum(axis=1)
 
@@ -561,83 +671,137 @@ if __name__ == '__main__':
     testdocs = np.hstack((extrafeats, testdocs))
     testdocs_bi = np.hstack((extrafeats, testdocs_bi))
 
-    print("Opening and tokenizing the test documents...")
-    testdocs = CountVectorizer(
-        input="filename",
-        ngram_range=(1, 1),
-        vocabulary=trainvectorizer.vocabulary_).fit_transform(testdataset)
-    testdocs_bi = CountVectorizer(
-        input="filename",
-        ngram_range=(1, 2),
-        vocabulary=trainvectorizer_bi.vocabulary_).fit_transform(testdataset)
-
     print(
         "\nTraining Naïve-Bayes classifier with unigram features and obtaining hyperparameters..."
     )
     bayes_unigram = scoreBayes(unigrams, trainclasses, testdocs, testclasses)
-    saveBootstrapStats(bayes_unigram["classifier"], testdocs, testclasses, bootstrap_indexes, filename="unigram_bayes.txt")    
-    print("Best Naïve-Bayes classifier for unigram features:\n" +
-            "\tScore: " + str(bayes_unigram["score"]) +
-            "\tSmoothing factor: " + str(bayes_unigram["sfactor"]))
+    saveBootstrapStats(bayes_unigram["classifier"],
+                       testdocs,
+                       testclasses,
+                       bootstrap_indexes,
+                       filename="unigram_bayes.txt")
+    print("Best Naïve-Bayes classifier for unigram features:\n" + "\tScore: " +
+          str(bayes_unigram["score"]) + "\tSmoothing factor: " +
+          str(bayes_unigram["sfactor"]))
 
-    print("\nTraining Naïve-Bayes classifier with unigram+bigram features and obtaining hyperparameters...")
-    bayes_unibigram = scoreBayes(unibigrams, trainclasses, testdocs_bi, testclasses)
-    saveBootstrapStats(bayes_unibigram["classifier"], testdocs_bi, testclasses, bootstrap_indexes, filename="unibigram_bayes.txt")
+    print(
+        "\nTraining Naïve-Bayes classifier with unigram+bigram features and obtaining hyperparameters..."
+    )
+    bayes_unibigram = scoreBayes(unibigrams, trainclasses, testdocs_bi,
+                                 testclasses)
+    saveBootstrapStats(bayes_unibigram["classifier"],
+                       testdocs_bi,
+                       testclasses,
+                       bootstrap_indexes,
+                       filename="unibigram_bayes.txt")
     print("Best Naïve-Bayes classifier for unigram+bigram features:\n" +
-            "\tScore: " + str(bayes_unibigram["score"]) +
-            "\tSmoothing factor: " + str(bayes_unibigram["sfactor"]))
-    
-    
-    print("\nTraining Logistic Regression with unigram features and obtaining hyperparameters...")
-    logreg_unigram = scoreLogReg(unigrams, trainclasses, testdocs, testclasses,
-                          lambda_start=0.001, lambda_end=1, lambda_step=0.02)
-    saveBootstrapStats(logreg_unigram["classifier"], testdocs, testclasses, bootstrap_indexes, filename="unigram_logreg.txt")
+          "\tScore: " + str(bayes_unibigram["score"]) +
+          "\tSmoothing factor: " + str(bayes_unibigram["sfactor"]))
+
+    print(
+        "\nTraining Logistic Regression with unigram features and obtaining hyperparameters..."
+    )
+    logreg_unigram = scoreLogReg(unigrams,
+                                 trainclasses,
+                                 testdocs,
+                                 testclasses,
+                                 lambda_start=0.001,
+                                 lambda_end=1,
+                                 lambda_step=0.02)
+    saveBootstrapStats(logreg_unigram["classifier"],
+                       testdocs,
+                       testclasses,
+                       bootstrap_indexes,
+                       filename="unigram_logreg.txt")
     print("Best Logistic Regression classifier for unigram features:\n" +
-            "\tScore: " + str(logreg_unigram["score"]) +
-            "\tLambda: " + str(logreg_unigram["lambda"]))
-    print("\nTraining Logistic Regression with unigram+bigram features and obtaining hyperparameters...")
-    logreg_unibigram = scoreLogReg(unibigrams, trainclasses, testdocs_bi, testclasses,
-                          lambda_start=0.001, lambda_end=1, lambda_step=0.02)
-    saveBootstrapStats(logreg_unibigram["classifier"], testdocs_bi, testclasses, bootstrap_indexes, filename="unibigram_logreg.txt")
-    print("Best Logistic Regression classifier for unigram and bigram features:\n" +
-            "\tScore: " + str(logreg_unibigram["score"]) +
-            "\tLambda: " + str(logreg_unibigram["lambda"]))
-    
+          "\tScore: " + str(logreg_unigram["score"]) + "\tLambda: " +
+          str(logreg_unigram["lambda"]))
+    print(
+        "\nTraining Logistic Regression with unigram+bigram features and obtaining hyperparameters..."
+    )
+    logreg_unibigram = scoreLogReg(unibigrams,
+                                   trainclasses,
+                                   testdocs_bi,
+                                   testclasses,
+                                   lambda_start=0.001,
+                                   lambda_end=1,
+                                   lambda_step=0.02)
+    saveBootstrapStats(logreg_unibigram["classifier"],
+                       testdocs_bi,
+                       testclasses,
+                       bootstrap_indexes,
+                       filename="unibigram_logreg.txt")
+    print(
+        "Best Logistic Regression classifier for unigram and bigram features:\n"
+        + "\tScore: " + str(logreg_unibigram["score"]) + "\tLambda: " +
+        str(logreg_unibigram["lambda"]))
 
-    print("\nTraining Random Forests with unigram features and obtaining hyperparameters...")
-    rforest_unigram = scoreRandomForests(unigrams, trainclasses, testdocs, testclasses,
-                        nfeats_range=(0.16,1,0.02))
-    
-    saveBootstrapStats(rforest_unigram["classifier"], testdocs, testclasses, bootstrap_indexes, filename="unigram_randomforest.txt")
+    print(
+        "\nTraining Random Forests with unigram features and obtaining hyperparameters..."
+    )
+    rforest_unigram = scoreRandomForests(unigrams,
+                                         trainclasses,
+                                         testdocs,
+                                         testclasses,
+                                         nfeats_range=(0.16, 1, 0.02))
+
+    saveBootstrapStats(rforest_unigram["classifier"],
+                       testdocs,
+                       testclasses,
+                       bootstrap_indexes,
+                       filename="unigram_randomforest.txt")
     print("Best Random Forest classifier for unigram features:\n" +
-            "\tScore: " + str(rforest_unigram["score"]) +
-            "\tNumber of trees: " + str(rforest_unigram["ntrees"]) +
-            "\tNumber of features: " + str(rforest_unigram["nfeats"]))
-    print("\nTraining Random Forests with unigram+bigram features and obtaining hyperparameters...")
-    rforest_unibigram = scoreRandomForests(unibigrams, trainclasses, testdocs_bi, testclasses,
-                        nfeats_range=(0.03, 0.1, 0.02))
-    saveBootstrapStats(rforest_unibigram["classifier"], testdocs_bi, testclasses, bootstrap_indexes, filename="unibigram_randomforest.txt")
+          "\tScore: " + str(rforest_unigram["score"]) + "\tNumber of trees: " +
+          str(rforest_unigram["ntrees"]) + "\tNumber of features: " +
+          str(rforest_unigram["nfeats"]))
+    print(
+        "\nTraining Random Forests with unigram+bigram features and obtaining hyperparameters..."
+    )
+    rforest_unibigram = scoreRandomForests(unibigrams,
+                                           trainclasses,
+                                           testdocs_bi,
+                                           testclasses,
+                                           nfeats_range=(0.03, 0.1, 0.02))
+    saveBootstrapStats(rforest_unibigram["classifier"],
+                       testdocs_bi,
+                       testclasses,
+                       bootstrap_indexes,
+                       filename="unibigram_randomforest.txt")
     print("Best Random Forest classifier for unigram and bigram features:\n" +
-            "\tScore: " + str(rforest_unigram["score"]) +
-            "\tNumber of trees: " + str(rforest_unigram["ntrees"]) +
-            "\tNumber of features: " + str(rforest_unigram["nfeats"]))
+          "\tScore: " + str(rforest_unigram["score"]) + "\tNumber of trees: " +
+          str(rforest_unigram["ntrees"]) + "\tNumber of features: " +
+          str(rforest_unigram["nfeats"]))
 
-    print("\nTraining Cost-Complexity Pruning Decision tree with unigram features and obtaining hyperparameters...")
-    dtree_unigram = scoreDecisionTree(unigrams, trainclasses, testdocs, testclasses)
-    saveBootstrapStats(dtree_unigram["classifier"], testdocs, testclasses, bootstrap_indexes, filename="unigram_dtree.txt")
+    print(
+        "\nTraining Cost-Complexity Pruning Decision tree with unigram features and obtaining hyperparameters..."
+    )
+    dtree_unigram = scoreDecisionTree(unigrams, trainclasses, testdocs,
+                                      testclasses)
+    saveBootstrapStats(dtree_unigram["classifier"],
+                       testdocs,
+                       testclasses,
+                       bootstrap_indexes,
+                       filename="unigram_dtree.txt")
     print("Best Decision Tree classifier for unigram and bigram features:\n" +
-            "\tScore: " + str(dtree_unigram["score"]) +
-            "\tPruning alpha: " + str(dtree_unigram["alpha"]) +
-            "\tMaximum depth of the tree: " + str(dtree_unigram["maxdepth"]) +
-            "\tMinleaf: " + str(dtree_unigram["minleaf"]) +
-            "\tMinsplit: " + str(dtree_unigram["minsplit"]))
-    
-    print("\nTraining Cost-Complexity Pruning Decision tree with unigram+bigram features and obtaining hyperparameters...")
-    dtree_unibigram = scoreDecisionTree(unibigrams, trainclasses, testdocs_bi, testclasses)
-    saveBootstrapStats(dtree_unibigram["classifier"], testdocs_bi, testclasses, bootstrap_indexes, filename="unibigram_dtree.txt")
+          "\tScore: " + str(dtree_unigram["score"]) + "\tPruning alpha: " +
+          str(dtree_unigram["alpha"]) + "\tMaximum depth of the tree: " +
+          str(dtree_unigram["maxdepth"]) + "\tMinleaf: " +
+          str(dtree_unigram["minleaf"]) + "\tMinsplit: " +
+          str(dtree_unigram["minsplit"]))
+
+    print(
+        "\nTraining Cost-Complexity Pruning Decision tree with unigram+bigram features and obtaining hyperparameters..."
+    )
+    dtree_unibigram = scoreDecisionTree(unibigrams, trainclasses, testdocs_bi,
+                                        testclasses)
+    saveBootstrapStats(dtree_unibigram["classifier"],
+                       testdocs_bi,
+                       testclasses,
+                       bootstrap_indexes,
+                       filename="unibigram_dtree.txt")
     print("Best Decision Tree classifier for unigram and bigram features:\n" +
-            "\tScore: " + str(dtree_unibigram["score"]) +
-            "\tPruning alpha: " + str(dtree_unibigram["alpha"]) +
-            "\tMaximum depth of the tree: " + str(dtree_unibigram["maxdepth"]) +
-            "\tMinleaf: " + str(dtree_unibigram["minleaf"]) +
-            "\tMinsplit: " + str(dtree_unibigram["minsplit"]))
+          "\tScore: " + str(dtree_unibigram["score"]) + "\tPruning alpha: " +
+          str(dtree_unibigram["alpha"]) + "\tMaximum depth of the tree: " +
+          str(dtree_unibigram["maxdepth"]) + "\tMinleaf: " +
+          str(dtree_unibigram["minleaf"]) + "\tMinsplit: " +
+          str(dtree_unibigram["minsplit"]))
