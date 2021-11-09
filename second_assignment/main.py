@@ -47,8 +47,8 @@ NRUNS = 100
 ### Returns:
 ###     list:               Top 10 features
 '''
-def important_features(trainvectorizer, trainset, trainclasses, clfclass, **parameters,
-                            extrafeatures=12, nfeats=10, nruns=30):
+def important_features(trainvectorizer, trainset, trainclasses, clfclass,
+                            extrafeatures=12, nfeats=10, nruns=30, **parameters):
     vocab = [word for word, idx in sorted(trainvectorizer.vocabulary_.items(), key=lambda x:x[1], reverse=True)]
 
     matrix = []
